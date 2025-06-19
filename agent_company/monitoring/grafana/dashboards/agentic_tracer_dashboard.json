@@ -1,0 +1,184 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Agentic Tracer Production Dashboard",
+    "tags": ["agentic-tracer", "connectomics", "production"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Processing Pipeline Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "agentic_tracer_volumes_processed_total",
+            "legendFormat": "Volumes Processed"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "displayMode": "list"
+            }
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Processing Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(agentic_tracer_processing_duration_seconds_sum[5m])",
+            "legendFormat": "Processing Rate (volumes/sec)"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Memory Usage",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "agentic_tracer_memory_usage_bytes",
+            "legendFormat": "Memory Usage"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Bytes",
+            "unit": "bytes"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Segmentation Quality",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "agentic_tracer_segmentation_confidence",
+            "legendFormat": "Confidence Score"
+          },
+          {
+            "expr": "agentic_tracer_uncertainty_score",
+            "legendFormat": "Uncertainty Score"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "Error Detection & Correction",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "agentic_tracer_errors_detected_total",
+            "legendFormat": "Errors Detected"
+          },
+          {
+            "expr": "agentic_tracer_errors_corrected_total",
+            "legendFormat": "Errors Corrected"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      },
+      {
+        "id": 6,
+        "title": "Continual Learning Progress",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "agentic_tracer_training_sessions_total",
+            "legendFormat": "Training Sessions"
+          },
+          {
+            "expr": "agentic_tracer_model_adaptations_total",
+            "legendFormat": "Model Adaptations"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        }
+      },
+      {
+        "id": 7,
+        "title": "System Resources",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total[5m]) * 100",
+            "legendFormat": "CPU Usage %"
+          },
+          {
+            "expr": "process_resident_memory_bytes / 1024 / 1024",
+            "legendFormat": "Memory Usage (MB)"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        }
+      },
+      {
+        "id": 8,
+        "title": "Pipeline Stage Performance",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "rate(agentic_tracer_stage_duration_seconds_bucket[5m])",
+            "legendFormat": "{{le}}"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+} 

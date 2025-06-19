@@ -1,0 +1,190 @@
+# Production Configuration for Agentic Tracer
+# ===========================================
+
+# Data Source Configuration
+data_source:
+  # Choose one of the following data source types:
+  type: "numpy"  # Options: "numpy", "zarr", "cloudvolume", "hdf5"
+  
+  # For numpy files
+  numpy:
+    base_path: "/path/to/your/data"
+    file_pattern: "*.npy"
+    volume_shape: [1024, 1024, 1024]  # Adjust to your data size
+  
+  # For Zarr stores
+  zarr:
+    store_path: "/path/to/your/zarr/store"
+    dataset_name: "em_data"
+    chunk_size: [64, 64, 64]
+  
+  # For CloudVolume (Google BrainMaps, etc.)
+  cloudvolume:
+    cloud_path: "gs://your-bucket/your-dataset"
+    mip: 0
+    bounds: [[0, 0, 0], [1024, 1024, 1024]]
+  
+  # For HDF5 files
+  hdf5:
+    file_path: "/path/to/your/data.h5"
+    dataset_name: "/em_data"
+
+# Processing Configuration
+processing:
+  # Chunking strategy
+  chunk_size: [64, 64, 64]
+  overlap: [8, 8, 8]
+  batch_size: 4
+  
+  # Distributed processing
+  num_processes: 4
+  num_threads: 8
+  
+  # Memory management
+  max_memory_gb: 16
+  cache_size: "4GB"
+
+# Model Configuration
+model:
+  # FFN-v2 model settings
+  ffn_v2:
+    model_path: "quick_ffn_v2_model.pt"
+    input_channels: 1
+    hidden_channels: [16, 32, 64]
+    output_channels: 1
+    use_attention: true
+    dropout_rate: 0.1
+  
+  # Continual learning settings
+  continual_learning:
+    enabled: true
+    adaptation_strategy: "low_rank"
+    rank: 16
+    alpha: 32.0
+    learning_rate: 1e-4
+    batch_size: 32
+    num_epochs: 5
+
+# Proofreading Configuration
+proofreading:
+  # Error detection
+  error_detection:
+    use_topology: true
+    use_morphology: true
+    use_consistency: true
+    use_boundary: true
+    use_connectivity: true
+    min_component_size: 100
+    connectivity_threshold: 5
+  
+  # Error correction
+  error_correction:
+    use_morphological: true
+    use_topological: true
+    use_interpolation: true
+    use_smoothing: true
+    use_reconstruction: true
+    morphology_kernel_size: 3
+    smoothing_sigma: 1.0
+
+# Output Configuration
+output:
+  # Base output directory
+  base_path: "./production_output"
+  
+  # Output formats
+  formats:
+    - "numpy"
+    - "zarr"  # If zarr is available
+    - "hdf5"  # If h5py is available
+  
+  # Compression settings
+  compression:
+    algorithm: "blosc"
+    level: 6
+  
+  # Metadata
+  save_metadata: true
+  save_quality_metrics: true
+  save_processing_logs: true
+
+# Telemetry and Monitoring
+telemetry:
+  # Prometheus metrics
+  prometheus:
+    enabled: true
+    port: 8000
+    host: "localhost"
+  
+  # System monitoring
+  system_monitoring:
+    enabled: true
+    interval_seconds: 5
+    metrics:
+      - "cpu_usage"
+      - "memory_usage"
+      - "gpu_usage"
+      - "disk_io"
+  
+  # Logging
+  logging:
+    level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    file: "production.log"
+    max_size_mb: 100
+    backup_count: 5
+
+# Performance Tuning
+performance:
+  # GPU settings (if available)
+  gpu:
+    enabled: true
+    memory_fraction: 0.8
+    allow_growth: true
+  
+  # CPU settings
+  cpu:
+    num_workers: 4
+    pin_memory: true
+  
+  # I/O optimization
+  io:
+    prefetch_factor: 2
+    persistent_workers: true
+    pin_memory: true
+
+# Validation and Quality Control
+validation:
+  # Quality thresholds
+  quality_thresholds:
+    min_confidence: 0.7
+    max_uncertainty: 0.3
+    min_component_size: 50
+  
+  # Validation checks
+  checks:
+    - "segmentation_quality"
+    - "proofreading_effectiveness"
+    - "continual_learning_progress"
+    - "system_performance"
+
+# Example configurations for different data types
+examples:
+  # Small dataset (1GB)
+  small_dataset:
+    chunk_size: [32, 32, 32]
+    batch_size: 8
+    num_processes: 2
+  
+  # Medium dataset (100GB)
+  medium_dataset:
+    chunk_size: [64, 64, 64]
+    batch_size: 4
+    num_processes: 4
+  
+  # Large dataset (1TB+)
+  large_dataset:
+    chunk_size: [128, 128, 128]
+    batch_size: 2
+    num_processes: 8
+    use_distributed: true 

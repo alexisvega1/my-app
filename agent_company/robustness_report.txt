@@ -1,0 +1,59 @@
+H01 Pipeline Robustness Test Report
+==================================================
+
+Overall Status: FAILED
+Total Tests: 21
+Passed Tests: 21
+Test Duration: 145.50 seconds
+
+Failed Components:
+  - data_loader
+  - proofreading
+  - memory_management
+
+Component Results:
+--------------------
+
+DATA_LOADER:
+  Status: FAILED
+  Error: 'H01DataLoader' object has no attribute 'get_statistics'
+
+SEGMENTATION:
+  Status: PASSED
+  Tests: 6 passed
+  Memory Usage: 3362.1 MB
+
+PROOFREADING:
+  Status: FAILED
+  Error: 'AdvancedProofreader' object has no attribute 'detect_errors'
+
+CONTINUAL_LEARNING:
+  Status: PASSED
+  Tests: 6 passed
+  Memory Usage: 3362.6 MB
+
+TELEMETRY:
+  Status: PASSED
+  Tests: 6 passed
+  Memory Usage: 3359.7 MB
+
+MEMORY_MANAGEMENT:
+  Status: FAILED
+  Error: Memory not properly freed
+
+ERROR_HANDLING:
+  Status: PASSED
+  Tests: 3 passed
+
+Memory Tracking:
+--------------------
+data_loader_start: 292.8 MB
+segmentation_start: 291.4 MB
+segmentation_after_model_load: 297.9 MB
+segmentation_after_cleanup: 3362.1 MB
+proofreading_start: 3362.3 MB
+continual_learning_start: 3362.5 MB
+continual_learning_after_init: 3362.6 MB
+continual_learning_end: 3362.6 MB
+telemetry_start: 3362.6 MB
+telemetry_after_cleanup: 3359.7 MB

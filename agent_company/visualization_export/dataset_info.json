@@ -1,0 +1,44 @@
+{
+  "segmentation_segmentation": {
+    "name": "segmentation_segmentation",
+    "shape": [
+      256,
+      256,
+      256
+    ],
+    "dtype": "float32",
+    "min_value": 0.0,
+    "max_value": 0.0,
+    "mean_value": 0.0,
+    "std_value": 0.0,
+    "size_mb": 64.0
+  },
+  "segmentation_uncertainty_segmentation": {
+    "name": "segmentation_uncertainty_segmentation",
+    "shape": [
+      256,
+      256,
+      256
+    ],
+    "dtype": "float32",
+    "min_value": 0.0,
+    "max_value": 0.0,
+    "mean_value": 0.0,
+    "std_value": 0.0,
+    "size_mb": 64.0
+  },
+  "segmentation_uncertainty": {
+    "name": "segmentation_uncertainty",
+    "shape": [
+      256,
+      256,
+      256
+    ],
+    "dtype": "float32",
+    "min_value": 0.0,
+    "max_value": 0.0,
+    "mean_value": 0.0,
+    "std_value": 0.0,
+    "size_mb": 64.0
+  }
+}

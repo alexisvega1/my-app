@@ -1,0 +1,353 @@
+2025-06-18 20:06:42,923 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 20:06:42,923 - __main__ - INFO - ==================================================
+2025-06-18 20:06:42,923 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 20:06:42,924 - __main__ - INFO - Initializing production components...
+2025-06-18 20:06:42,924 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 20:06:42,924 - __main__ - INFO - ✓ FFN-v2 plugin initialized
+2025-06-18 20:06:42,924 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 20:06:42,924 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 20:06:42,924 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 20:06:42,924 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 20:06:42,924 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 20:06:42,924 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 20:06:42,924 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 20:06:42,924 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 20:06:42,984 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 20:06:42,985 - telemetry - INFO - System monitoring started
+2025-06-18 20:06:42,985 - telemetry - WARNING - System monitoring already running
+2025-06-18 20:06:42,985 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 20:06:42,985 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 20:06:42,985 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 20:06:42,985 - __main__ - INFO - All components initialized successfully
+2025-06-18 20:06:42,985 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 20:06:43,027 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph9gxrfld/synthetic_volume.npy
+2025-06-18 20:06:43,027 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 20:06:43,027 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph9gxrfld/synthetic_volume.npy
+2025-06-18 20:06:43,027 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 20:06:43,027 - segmenters.ffn_v2_advanced - ERROR - Model not loaded
+2025-06-18 20:06:43,027 - __main__ - ERROR - Volume processing failed: Model not loaded
+2025-06-18 20:06:43,027 - __main__ - ERROR - Production demo failed: Model not loaded
+2025-06-18 20:06:43,027 - __main__ - INFO - Cleaning up production components...
+2025-06-18 20:06:43,027 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 20:06:48,037 - telemetry - INFO - System monitoring stopped
+2025-06-18 20:06:53,047 - telemetry - INFO - System monitoring stopped
+2025-06-18 20:06:53,047 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 20:06:53,047 - __main__ - INFO - Cleanup completed
+2025-06-18 20:06:53,048 - __main__ - INFO - Production demo cleanup completed
+2025-06-18 21:01:39,252 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 21:01:39,252 - __main__ - INFO - ==================================================
+2025-06-18 21:01:39,252 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 21:01:39,252 - __main__ - INFO - Initializing production components...
+2025-06-18 21:01:39,252 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 21:01:39,264 - segmenters.ffn_v2_advanced - INFO - Production FFN-v2 model initialized with 486449 parameters
+2025-06-18 21:01:39,285 - segmenters.ffn_v2_advanced - INFO - Distributed processor initialized on cpu
+2025-06-18 21:01:39,300 - segmenters.ffn_v2_advanced - ERROR - Failed to load model: Error(s) in loading state_dict for ProductionFFNv2Model:
+	Unexpected key(s) in state_dict: "segmentation_head.weight", "segmentation_head.bias". 
+2025-06-18 21:01:39,301 - __main__ - WARNING - Failed to load trained model, using stub
+2025-06-18 21:01:39,302 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 21:01:39,302 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 21:01:39,302 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 21:01:39,303 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 21:01:39,303 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 21:01:39,303 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 21:01:39,303 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 21:01:39,303 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 21:01:39,349 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 21:01:39,349 - telemetry - INFO - System monitoring started
+2025-06-18 21:01:39,350 - telemetry - WARNING - System monitoring already running
+2025-06-18 21:01:39,350 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 21:01:39,350 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 21:01:39,350 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 21:01:39,350 - __main__ - INFO - All components initialized successfully
+2025-06-18 21:01:39,350 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 21:01:39,395 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph7edeaxl/synthetic_volume.npy
+2025-06-18 21:01:39,395 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 21:01:39,395 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph7edeaxl/synthetic_volume.npy
+2025-06-18 21:01:39,395 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 21:01:39,398 - segmenters.ffn_v2_advanced - ERROR - Distributed processing failed: [Errno 20] Not a directory: '/var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph7edeaxl/synthetic_volume.npy/info'
+2025-06-18 21:01:39,398 - __main__ - ERROR - Volume processing failed: [Errno 20] Not a directory: '/var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph7edeaxl/synthetic_volume.npy/info'
+2025-06-18 21:01:39,398 - __main__ - ERROR - Production demo failed: [Errno 20] Not a directory: '/var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmph7edeaxl/synthetic_volume.npy/info'
+2025-06-18 21:01:39,398 - __main__ - INFO - Cleaning up production components...
+2025-06-18 21:01:39,398 - segmenters.ffn_v2_advanced - INFO - Distributed processor cleaned up
+2025-06-18 21:01:39,398 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 21:01:44,403 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:01:49,409 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:01:49,409 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 21:01:49,409 - __main__ - INFO - Cleanup completed
+2025-06-18 21:01:49,410 - __main__ - INFO - Production demo cleanup completed
+2025-06-18 21:02:30,958 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 21:02:30,959 - __main__ - INFO - ==================================================
+2025-06-18 21:02:30,959 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 21:02:30,959 - __main__ - INFO - Initializing production components...
+2025-06-18 21:02:30,959 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 21:02:30,973 - production_ffn_v2 - INFO - Production FFN-v2 model initialized with 486466 parameters
+2025-06-18 21:02:30,996 - segmenters.ffn_v2_advanced - INFO - Distributed processor initialized on cpu
+2025-06-18 21:02:31,005 - segmenters.ffn_v2_advanced - INFO - Model loaded from quick_ffn_v2_model.pt
+2025-06-18 21:02:31,005 - segmenters.ffn_v2_advanced - INFO - Model config: {'input_channels': 1, 'hidden_channels': [16, 32, 64], 'output_channels': 1, 'use_attention': True, 'dropout_rate': 0.1}
+2025-06-18 21:02:31,005 - __main__ - INFO - ✓ FFN-v2 plugin initialized with trained model
+2025-06-18 21:02:31,006 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 21:02:31,006 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 21:02:31,006 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 21:02:31,006 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 21:02:31,006 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 21:02:31,006 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 21:02:31,007 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 21:02:31,007 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 21:02:31,017 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 21:02:31,018 - telemetry - INFO - System monitoring started
+2025-06-18 21:02:31,018 - telemetry - WARNING - System monitoring already running
+2025-06-18 21:02:31,018 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 21:02:31,018 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 21:02:31,018 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 21:02:31,018 - __main__ - INFO - All components initialized successfully
+2025-06-18 21:02:31,019 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 21:02:31,069 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmpjii6c5o1/synthetic_volume.npy
+2025-06-18 21:02:31,070 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 21:02:31,070 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmpjii6c5o1/synthetic_volume.npy
+2025-06-18 21:02:31,070 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 21:02:31,082 - segmenters.ffn_v2_advanced - INFO - Dataset initialized: 27 chunks
+2025-06-18 21:02:31,102 - segmenters.ffn_v2_advanced - ERROR - Distributed processing failed: stack expects each tensor to be equal size, but got [64, 64, 64] at entry 0 and [64, 64, 16] at entry 2
+2025-06-18 21:02:31,102 - __main__ - ERROR - Volume processing failed: stack expects each tensor to be equal size, but got [64, 64, 64] at entry 0 and [64, 64, 16] at entry 2
+2025-06-18 21:02:31,102 - __main__ - ERROR - Production demo failed: stack expects each tensor to be equal size, but got [64, 64, 64] at entry 0 and [64, 64, 16] at entry 2
+2025-06-18 21:02:31,102 - __main__ - INFO - Cleaning up production components...
+2025-06-18 21:02:31,103 - segmenters.ffn_v2_advanced - INFO - Distributed processor cleaned up
+2025-06-18 21:02:31,103 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 21:02:36,108 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:02:41,113 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:02:41,114 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 21:02:41,114 - __main__ - INFO - Cleanup completed
+2025-06-18 21:02:41,114 - __main__ - INFO - Production demo cleanup completed
+2025-06-18 21:03:02,823 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 21:03:02,823 - __main__ - INFO - ==================================================
+2025-06-18 21:03:02,823 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 21:03:02,823 - __main__ - INFO - Initializing production components...
+2025-06-18 21:03:02,824 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 21:03:02,838 - production_ffn_v2 - INFO - Production FFN-v2 model initialized with 486466 parameters
+2025-06-18 21:03:02,858 - segmenters.ffn_v2_advanced - INFO - Distributed processor initialized on cpu
+2025-06-18 21:03:02,864 - segmenters.ffn_v2_advanced - INFO - Model loaded from quick_ffn_v2_model.pt
+2025-06-18 21:03:02,864 - segmenters.ffn_v2_advanced - INFO - Model config: {'input_channels': 1, 'hidden_channels': [16, 32, 64], 'output_channels': 1, 'use_attention': True, 'dropout_rate': 0.1}
+2025-06-18 21:03:02,864 - __main__ - INFO - ✓ FFN-v2 plugin initialized with trained model
+2025-06-18 21:03:02,865 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 21:03:02,865 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 21:03:02,865 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 21:03:02,865 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 21:03:02,865 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 21:03:02,865 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 21:03:02,866 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 21:03:02,866 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 21:03:02,875 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 21:03:02,875 - telemetry - INFO - System monitoring started
+2025-06-18 21:03:02,875 - telemetry - WARNING - System monitoring already running
+2025-06-18 21:03:02,875 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 21:03:02,876 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 21:03:02,876 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 21:03:02,876 - __main__ - INFO - All components initialized successfully
+2025-06-18 21:03:02,876 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 21:03:02,924 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmpqu79r4em/synthetic_volume.npy
+2025-06-18 21:03:02,924 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 21:03:02,924 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmpqu79r4em/synthetic_volume.npy
+2025-06-18 21:03:02,924 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 21:03:02,930 - segmenters.ffn_v2_advanced - INFO - Dataset initialized: 27 chunks
+2025-06-18 21:03:02,943 - segmenters.ffn_v2_advanced - INFO - Submitted batch 0/7
+2025-06-18 21:03:02,977 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 4, 64, 64, 64] to have 1 channels, but got 4 channels instead
+2025-06-18 21:03:02,978 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 4, 64, 64, 64] to have 1 channels, but got 4 channels instead
+2025-06-18 21:03:02,978 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 4, 64, 64, 64] to have 1 channels, but got 4 channels instead
+2025-06-18 21:03:02,978 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 4, 64, 64, 64] to have 1 channels, but got 4 channels instead
+2025-06-18 21:03:02,983 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 4, 64, 64, 64] to have 1 channels, but got 4 channels instead
+2025-06-18 21:03:02,985 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 4, 64, 64, 64] to have 1 channels, but got 4 channels instead
+2025-06-18 21:03:02,987 - segmenters.ffn_v2_advanced - ERROR - Batch processing failed: Given groups=1, weight of size [16, 1, 3, 3, 3], expected input[1, 3, 64, 64, 64] to have 1 channels, but got 3 channels instead
+2025-06-18 21:03:03,045 - __main__ - INFO - Step 2: Advanced Proofreading
+2025-06-18 21:03:03,045 - proofreading_advanced - INFO - Detecting errors...
+2025-06-18 21:03:03,054 - proofreading_advanced - ERROR - Error detection method morphology failed: module 'scipy.ndimage' has no attribute 'binary_skeletonize'
+2025-06-18 21:03:03,099 - proofreading_advanced - INFO - Correcting errors...
+2025-06-18 21:03:03,920 - __main__ - ERROR - Volume processing failed: Object of type int64 is not JSON serializable
+2025-06-18 21:03:03,920 - __main__ - ERROR - Production demo failed: Object of type int64 is not JSON serializable
+2025-06-18 21:03:03,920 - __main__ - INFO - Cleaning up production components...
+2025-06-18 21:03:03,922 - segmenters.ffn_v2_advanced - INFO - Distributed processor cleaned up
+2025-06-18 21:03:03,922 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 21:03:08,927 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:03:13,933 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:03:13,933 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 21:03:13,934 - __main__ - INFO - Cleanup completed
+2025-06-18 21:03:13,934 - __main__ - INFO - Production demo cleanup completed
+2025-06-18 21:13:30,648 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 21:13:30,649 - __main__ - INFO - ==================================================
+2025-06-18 21:13:30,649 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 21:13:30,649 - __main__ - INFO - Initializing production components...
+2025-06-18 21:13:30,649 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 21:13:30,662 - production_ffn_v2 - INFO - Production FFN-v2 model initialized with 486466 parameters
+2025-06-18 21:13:30,690 - segmenters.ffn_v2_advanced - INFO - Distributed processor initialized on cpu
+2025-06-18 21:13:30,700 - segmenters.ffn_v2_advanced - INFO - Model loaded from quick_ffn_v2_model.pt
+2025-06-18 21:13:30,701 - segmenters.ffn_v2_advanced - INFO - Model config: {'input_channels': 1, 'hidden_channels': [16, 32, 64], 'output_channels': 1, 'use_attention': True, 'dropout_rate': 0.1}
+2025-06-18 21:13:30,701 - __main__ - INFO - ✓ FFN-v2 plugin initialized with trained model
+2025-06-18 21:13:30,701 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 21:13:30,701 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 21:13:30,701 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 21:13:30,701 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 21:13:30,701 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 21:13:30,701 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 21:13:30,702 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 21:13:30,702 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 21:13:30,722 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 21:13:30,723 - telemetry - INFO - System monitoring started
+2025-06-18 21:13:30,723 - telemetry - WARNING - System monitoring already running
+2025-06-18 21:13:30,723 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 21:13:30,723 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 21:13:30,723 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 21:13:30,723 - __main__ - INFO - All components initialized successfully
+2025-06-18 21:13:30,723 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 21:13:30,783 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmptj2q_qhp/synthetic_volume.npy
+2025-06-18 21:13:30,783 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 21:13:30,783 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmptj2q_qhp/synthetic_volume.npy
+2025-06-18 21:13:30,783 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 21:13:30,791 - segmenters.ffn_v2_advanced - INFO - Dataset initialized: 27 chunks
+2025-06-18 21:13:30,820 - segmenters.ffn_v2_advanced - INFO - Submitted batch 0/7
+2025-06-18 21:13:48,239 - segmenters.ffn_v2_advanced - ERROR - Distributed processing failed: too many values to unpack (expected 3)
+2025-06-18 21:13:48,239 - __main__ - ERROR - Volume processing failed: too many values to unpack (expected 3)
+2025-06-18 21:13:48,240 - __main__ - ERROR - Production demo failed: too many values to unpack (expected 3)
+2025-06-18 21:13:48,240 - __main__ - INFO - Cleaning up production components...
+2025-06-18 21:13:48,240 - segmenters.ffn_v2_advanced - INFO - Distributed processor cleaned up
+2025-06-18 21:13:48,240 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 21:13:53,245 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:13:58,247 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:13:58,248 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 21:13:58,248 - __main__ - INFO - Cleanup completed
+2025-06-18 21:13:58,248 - __main__ - INFO - Production demo cleanup completed
+2025-06-18 21:14:57,598 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 21:14:57,599 - __main__ - INFO - ==================================================
+2025-06-18 21:14:57,599 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 21:14:57,599 - __main__ - INFO - Initializing production components...
+2025-06-18 21:14:57,599 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 21:14:57,613 - production_ffn_v2 - INFO - Production FFN-v2 model initialized with 486466 parameters
+2025-06-18 21:14:57,636 - segmenters.ffn_v2_advanced - INFO - Distributed processor initialized on cpu
+2025-06-18 21:14:57,646 - segmenters.ffn_v2_advanced - INFO - Model loaded from quick_ffn_v2_model.pt
+2025-06-18 21:14:57,647 - segmenters.ffn_v2_advanced - INFO - Model config: {'input_channels': 1, 'hidden_channels': [16, 32, 64], 'output_channels': 1, 'use_attention': True, 'dropout_rate': 0.1}
+2025-06-18 21:14:57,647 - __main__ - INFO - ✓ FFN-v2 plugin initialized with trained model
+2025-06-18 21:14:57,647 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 21:14:57,647 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 21:14:57,648 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 21:14:57,648 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 21:14:57,648 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 21:14:57,648 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 21:14:57,648 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 21:14:57,648 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 21:14:57,664 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 21:14:57,664 - telemetry - INFO - System monitoring started
+2025-06-18 21:14:57,664 - telemetry - WARNING - System monitoring already running
+2025-06-18 21:14:57,664 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 21:14:57,664 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 21:14:57,664 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 21:14:57,664 - __main__ - INFO - All components initialized successfully
+2025-06-18 21:14:57,664 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 21:14:57,713 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmpwbnvshbo/synthetic_volume.npy
+2025-06-18 21:14:57,713 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 21:14:57,713 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmpwbnvshbo/synthetic_volume.npy
+2025-06-18 21:14:57,713 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 21:14:57,720 - segmenters.ffn_v2_advanced - INFO - Dataset initialized: 27 chunks
+2025-06-18 21:14:57,737 - segmenters.ffn_v2_advanced - INFO - Submitted batch 0/7
+2025-06-18 21:15:13,182 - segmenters.ffn_v2_advanced - ERROR - Distributed processing failed: too many values to unpack (expected 3)
+2025-06-18 21:15:13,182 - __main__ - ERROR - Volume processing failed: too many values to unpack (expected 3)
+2025-06-18 21:15:13,183 - __main__ - ERROR - Production demo failed: too many values to unpack (expected 3)
+2025-06-18 21:15:13,183 - __main__ - INFO - Cleaning up production components...
+2025-06-18 21:15:13,183 - segmenters.ffn_v2_advanced - INFO - Distributed processor cleaned up
+2025-06-18 21:15:13,183 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 21:15:18,188 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:15:23,190 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:15:23,190 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 21:15:23,190 - __main__ - INFO - Cleanup completed
+2025-06-18 21:15:23,191 - __main__ - INFO - Production demo cleanup completed
+2025-06-18 21:15:46,992 - __main__ - INFO - Starting Production Agentic Tracer Demo
+2025-06-18 21:15:46,992 - __main__ - INFO - ==================================================
+2025-06-18 21:15:46,992 - __main__ - INFO - Production Agentic Tracer initialized
+2025-06-18 21:15:46,992 - __main__ - INFO - Initializing production components...
+2025-06-18 21:15:46,992 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin initialized
+2025-06-18 21:15:47,005 - production_ffn_v2 - INFO - Production FFN-v2 model initialized with 486466 parameters
+2025-06-18 21:15:47,026 - segmenters.ffn_v2_advanced - INFO - Distributed processor initialized on cpu
+2025-06-18 21:15:47,033 - segmenters.ffn_v2_advanced - INFO - Model loaded from quick_ffn_v2_model.pt
+2025-06-18 21:15:47,033 - segmenters.ffn_v2_advanced - INFO - Model config: {'input_channels': 1, 'hidden_channels': [16, 32, 64], 'output_channels': 1, 'use_attention': True, 'dropout_rate': 0.1}
+2025-06-18 21:15:47,033 - __main__ - INFO - ✓ FFN-v2 plugin initialized with trained model
+2025-06-18 21:15:47,034 - proofreading_advanced - INFO - Error detector initialized
+2025-06-18 21:15:47,034 - proofreading_advanced - INFO - Error corrector initialized
+2025-06-18 21:15:47,034 - proofreading_advanced - INFO - Advanced proofreader initialized
+2025-06-18 21:15:47,034 - __main__ - INFO - ✓ Advanced proofreader initialized
+2025-06-18 21:15:47,034 - continual_learning_advanced - INFO - Advanced continual learner initialized
+2025-06-18 21:15:47,034 - __main__ - INFO - ✓ Advanced continual learner initialized
+2025-06-18 21:15:47,034 - telemetry - INFO - Prometheus metrics initialized
+2025-06-18 21:15:47,034 - telemetry - INFO - Telemetry system initialized on port 8000
+2025-06-18 21:15:47,043 - telemetry - INFO - Prometheus metrics server started on port 8000
+2025-06-18 21:15:47,044 - telemetry - INFO - System monitoring started
+2025-06-18 21:15:47,044 - telemetry - WARNING - System monitoring already running
+2025-06-18 21:15:47,044 - __main__ - INFO - ✓ Telemetry server started
+2025-06-18 21:15:47,044 - memory - INFO - Creating new memory file: memory.json
+2025-06-18 21:15:47,044 - __main__ - INFO - ✓ Memory manager initialized
+2025-06-18 21:15:47,044 - __main__ - INFO - All components initialized successfully
+2025-06-18 21:15:47,044 - __main__ - INFO - Creating synthetic test volume...
+2025-06-18 21:15:47,110 - __main__ - INFO - Created synthetic volume: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmp4pxnlhf0/synthetic_volume.npy
+2025-06-18 21:15:47,110 - __main__ - INFO - Processing volume through production pipeline...
+2025-06-18 21:15:47,110 - __main__ - INFO - Starting volume processing pipeline: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmp4pxnlhf0/synthetic_volume.npy
+2025-06-18 21:15:47,110 - __main__ - INFO - Step 1: FFN-v2 Segmentation
+2025-06-18 21:15:47,121 - segmenters.ffn_v2_advanced - INFO - Dataset initialized: 27 chunks
+2025-06-18 21:15:47,132 - segmenters.ffn_v2_advanced - INFO - Submitted batch 0/7
+2025-06-18 21:16:00,827 - segmenters.ffn_v2_advanced - INFO - Merging 7 results
+2025-06-18 21:16:00,829 - segmenters.ffn_v2_advanced - INFO - First result keys: ['segmentations', 'uncertainties', 'coordinates']
+2025-06-18 21:16:00,829 - segmenters.ffn_v2_advanced - INFO - Segmentations length: 4
+2025-06-18 21:16:00,829 - segmenters.ffn_v2_advanced - INFO - Uncertainties length: 4
+2025-06-18 21:16:00,829 - segmenters.ffn_v2_advanced - INFO - Coordinates length: 3
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - INFO - First coordinate: tensor([0, 0, 0, 0])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - INFO - First segmentation shape: (1, 64, 64, 64)
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([0, 0, 0, 0])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 0,  0,  0, 56])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([  0,  56, 112,   0])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([0, 0, 0, 0])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 56,  56, 112, 112])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 56, 112,   0,  56])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 0, 56, 56, 56])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112,   0,   0,   0])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112,   0,  56, 112])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([56, 56, 56, 56])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 56,  56,  56, 112])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([  0,  56, 112,   0])
+2025-06-18 21:16:00,830 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 56,  56, 112, 112])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112, 112,   0,   0])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 56, 112,   0,  56])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112, 112, 112, 112])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([ 0, 56, 56, 56])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112,   0,  56, 112])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112, 112, 112])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([112, 112, 112])
+2025-06-18 21:16:00,831 - segmenters.ffn_v2_advanced - ERROR - Invalid coordinate format: tensor([  0,  56, 112])
+2025-06-18 21:16:00,885 - __main__ - INFO - Step 2: Advanced Proofreading
+2025-06-18 21:16:00,885 - proofreading_advanced - INFO - Detecting errors...
+2025-06-18 21:16:00,891 - proofreading_advanced - ERROR - Error detection method morphology failed: module 'scipy.ndimage' has no attribute 'binary_skeletonize'
+2025-06-18 21:16:00,924 - proofreading_advanced - INFO - Correcting errors...
+2025-06-18 21:16:01,682 - __main__ - INFO - Step 3: Preparing training data
+2025-06-18 21:16:01,683 - __main__ - INFO - Prepared 0 training samples
+2025-06-18 21:16:01,685 - __main__ - INFO - Volume processing completed in 14.57s
+2025-06-18 21:16:01,685 - __main__ - INFO - Processing Results:
+2025-06-18 21:16:01,685 - __main__ - INFO - ------------------------------
+2025-06-18 21:16:01,685 - __main__ - INFO - Volume processed: /var/folders/qk/40d4zghx693d9wd9y6fbjtkw0000gn/T/tmp4pxnlhf0/synthetic_volume.npy
+2025-06-18 21:16:01,685 - __main__ - INFO - Processing time: 14.57s
+2025-06-18 21:16:01,685 - __main__ - INFO - Segmentation confidence: 1.000
+2025-06-18 21:16:01,685 - __main__ - INFO - Errors detected: 0
+2025-06-18 21:16:01,685 - __main__ - INFO - Volume change ratio: 0.000
+2025-06-18 21:16:01,685 - __main__ - INFO - Overall confidence: 1.000
+2025-06-18 21:16:01,685 - __main__ - INFO - 
+System Statistics:
+2025-06-18 21:16:01,685 - __main__ - INFO - ------------------------------
+2025-06-18 21:16:01,685 - __main__ - INFO - Volumes processed: 1
+2025-06-18 21:16:01,686 - __main__ - INFO - Total processing time: 14.57s
+2025-06-18 21:16:01,686 - __main__ - INFO - System uptime: 14.69s
+2025-06-18 21:16:01,686 - __main__ - INFO - Telemetry available at: http://localhost:8000/metrics
+2025-06-18 21:16:01,686 - __main__ - INFO - 
+Results saved to: production_output/processing_results.json
+2025-06-18 21:16:01,686 - __main__ - INFO - Production demo completed successfully!
+2025-06-18 21:16:01,686 - __main__ - INFO - Telemetry server running. Press Ctrl+C to stop...
+2025-06-18 21:27:08,487 - __main__ - INFO - Received interrupt signal
+2025-06-18 21:27:08,488 - __main__ - INFO - Cleaning up production components...
+2025-06-18 21:27:08,489 - segmenters.ffn_v2_advanced - INFO - Distributed processor cleaned up
+2025-06-18 21:27:08,490 - segmenters.ffn_v2_advanced - INFO - Advanced FFN-v2 Plugin cleaned up
+2025-06-18 21:27:09,291 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:27:09,292 - telemetry - INFO - System monitoring stopped
+2025-06-18 21:27:09,292 - telemetry - INFO - Telemetry system cleaned up
+2025-06-18 21:27:09,292 - __main__ - INFO - Cleanup completed
+2025-06-18 21:27:09,294 - __main__ - INFO - Production demo cleanup completed

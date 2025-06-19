@@ -1,0 +1,120 @@
+# Test Configuration for Agentic Tracer
+# =====================================
+
+# Data Source Configuration
+data_source:
+  type: "numpy"
+  numpy:
+    base_path: "."
+    file_pattern: "synthetic_volume.npy"
+    volume_shape: [128, 128, 128]
+
+# Processing Configuration
+processing:
+  chunk_size: [32, 32, 32]
+  overlap: [4, 4, 4]
+  batch_size: 2
+  num_processes: 2
+  num_threads: 4
+  max_memory_gb: 4
+  cache_size: "1GB"
+
+# Model Configuration
+model:
+  ffn_v2:
+    model_path: "quick_ffn_v2_model.pt"
+    input_channels: 1
+    hidden_channels: [16, 32, 64]
+    output_channels: 1
+    use_attention: true
+    dropout_rate: 0.1
+  
+  continual_learning:
+    enabled: true
+    adaptation_strategy: "low_rank"
+    rank: 8
+    alpha: 16.0
+    learning_rate: 1e-4
+    batch_size: 16
+    num_epochs: 3
+
+# Proofreading Configuration
+proofreading:
+  error_detection:
+    use_topology: true
+    use_morphology: true
+    use_consistency: true
+    use_boundary: true
+    use_connectivity: true
+    min_component_size: 50
+    connectivity_threshold: 3
+  
+  error_correction:
+    use_morphological: true
+    use_topological: true
+    use_interpolation: true
+    use_smoothing: true
+    use_reconstruction: true
+    morphology_kernel_size: 3
+    smoothing_sigma: 0.5
+
+# Output Configuration
+output:
+  base_path: "./test_output"
+  formats:
+    - "numpy"
+  compression:
+    algorithm: "blosc"
+    level: 4
+  save_metadata: true
+  save_quality_metrics: true
+  save_processing_logs: true
+
+# Telemetry and Monitoring
+telemetry:
+  prometheus:
+    enabled: true
+    port: 8000
+    host: "localhost"
+  
+  system_monitoring:
+    enabled: true
+    interval_seconds: 10
+    metrics:
+      - "cpu_usage"
+      - "memory_usage"
+  
+  logging:
+    level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    file: "test_production.log"
+    max_size_mb: 10
+    backup_count: 2
+
+# Performance Tuning
+performance:
+  gpu:
+    enabled: false  # Disable GPU for testing
+    memory_fraction: 0.5
+    allow_growth: true
+  
+  cpu:
+    num_workers: 2
+    pin_memory: false
+  
+  io:
+    prefetch_factor: 1
+    persistent_workers: false
+    pin_memory: false
+
+# Validation and Quality Control
+validation:
+  quality_thresholds:
+    min_confidence: 0.5
+    max_uncertainty: 0.5
+    min_component_size: 25
+  
+  checks:
+    - "segmentation_quality"
+    - "proofreading_effectiveness"
+    - "continual_learning_progress" 

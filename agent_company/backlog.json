@@ -1,0 +1,26 @@
+[
+  {
+    "id": "671f5043-cf39-4cfc-a80a-72c68c2d5fee",
+    "description": "Build a function that fetches current ETH-USD price and returns it as float",
+    "priority": "medium",
+    "status": "pending",
+    "created_at": "2025-06-18T18:41:59.920769",
+    "updated_at": "2025-06-18T18:41:59.920771"
+  },
+  {
+    "id": "d5430a47-a057-4906-a08c-1ca430f7d5d5",
+    "description": "Build a function that fetches current ETH-USD price and returns it as float",
+    "priority": "medium",
+    "status": "pending",
+    "created_at": "2025-06-18T18:47:14.160401",
+    "updated_at": "2025-06-18T18:47:14.160403"
+  },
+  {
+    "id": "3c9bfd64-580e-4e02-9036-bca2c9708907",
+    "description": "Build a function that fetches current ETH-USD price and returns it as float",
+    "priority": "medium",
+    "status": "pending",
+    "created_at": "2025-06-18T18:48:07.990161",
+    "updated_at": "2025-06-18T18:48:07.990163"
+  }
+]
