@@ -719,4 +719,91 @@ class AdvancedFFNv2Plugin:
         """Clean up resources."""
         if self.processor:
             self.processor.cleanup()
-        logger.info("Advanced FFN-v2 Plugin cleaned up") 
+            logger.info("FFN-v2 processor cleaned up")
+
+    def segment_and_visualize(self, 
+                              volume_path: str, 
+                              output_path: str,
+                              seed_point: Tuple[int, int, int],
+                              max_steps: int = 1000,
+                              save_interval: int = 50) -> str:
+        """
+        Performs iterative segmentation from a seed point and saves intermediate steps
+        for visualization, creating an animation of the flood-filling process.
+        """
+        logger.info(f"Starting iterative segmentation for visualization from seed: {seed_point}")
+
+        # Ensure the model is loaded
+        if not self.model:
+            logger.error("Model not loaded. Please load a model before running segmentation.")
+            return ""
+
+        # Create a directory for saving visualization steps
+        steps_dir = os.path.join(output_path, "segmentation_steps")
+        os.makedirs(steps_dir, exist_ok=True)
+        logger.info(f"Saving visualization steps to: {steps_dir}")
+
+        # Load the input volume data
+        try:
+            volume = np.load(volume_path, mmap_mode='r')
+            logger.info(f"Successfully loaded volume from {volume_path} with shape {volume.shape}")
+        except Exception as e:
+            logger.error(f"Failed to load volume from {volume_path}: {e}")
+            return ""
+        
+        # Initialize segmentation canvas and queue for flood fill
+        segmentation = np.zeros_like(volume, dtype=np.uint8)
+        q = Queue()
+        q.put(seed_point)
+        
+        # Set the seed point as segmented
+        segmentation[seed_point] = 1
+        
+        self.model.eval()
+        self.model.to('cuda' if torch.cuda.is_available() else 'cpu')
+
+        fov_shape = (33, 33, 33) # Field of View for the model
+        fov_center_offset = tuple(s // 2 for s in fov_shape)
+
+        for step in range(max_steps):
+            if q.empty():
+                logger.info("Queue is empty. Flood-filling complete.")
+                break
+
+            # Get next point to process
+            cz, cy, cx = q.get()
+
+            # Define the Field of View (FOV) around the current point
+            start = [c - o for c, o in zip((cz, cy, cx), fov_center_offset)]
+            end = [s + f for s, f in zip(start, fov_shape)]
+
+            # Ensure FOV is within volume bounds
+            if any(s < 0 for s in start) or any(e > s for e, s in zip(end, volume.shape)):
+                continue
+
+            # Extract the FOV and prepare it for the model
+            fov = volume[start[0]:end[0], start[1]:end[1], start[2]:end[2]]
+            fov_tensor = torch.from_numpy(fov).float().to('cuda' if torch.cuda.is_available() else 'cpu').unsqueeze(0).unsqueeze(0)
+
+            # Get model prediction
+            with torch.no_grad():
+                prediction = self.model(fov_tensor)
+                # The output of the model is a probability map, convert it to a binary mask
+                mask = (torch.sigmoid(prediction) > 0.9).squeeze().cpu().numpy()
+
+            # Add new positive predictions to the queue and update segmentation
+            for (dz, dy, dx), value in np.ndenumerate(mask):
+                if value > 0:
+                    world_coord = (start[0] + dz, start[1] + dy, start[2] + dx)
+                    if segmentation[world_coord] == 0:
+                        segmentation[world_coord] = 1
+                        q.put(world_coord)
+
+            # Save a snapshot of the segmentation at specified intervals
+            if (step + 1) % save_interval == 0:
+                snapshot_path = os.path.join(steps_dir, f"step_{step+1:04d}.npy")
+                np.save(snapshot_path, segmentation)
+                logger.info(f"Saved snapshot: {snapshot_path}")
+
+        logger.info(f"Finished visualization segmentation after {max_steps} steps.")
+        return steps_dir 
