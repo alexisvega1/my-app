@@ -84,16 +84,14 @@ class H01DataLoader:
             logger.info(f"Volume dtype: {self.volume.dtype}")
             
             # Get voxel size - handle different CloudVolume versions
-            try:
-                self.voxel_size = self.volume.voxel_size
-            except AttributeError:
-                # Fallback for different CloudVolume versions
-                try:
-                    self.voxel_size = self.volume.resolution
-                except AttributeError:
-                    # Default H01 voxel size: 4nm x 4nm x 33nm
-                    self.voxel_size = [4, 4, 33]
-                    logger.warning("Could not get voxel size from CloudVolume, using default H01 values")
+            if hasattr(self.volume.meta, 'resolution'):
+                self.voxel_size = self.volume.meta.resolution
+            elif hasattr(self.volume, 'resolution'):
+                 self.voxel_size = self.volume.resolution
+            else:
+                # Default H01 voxel size: 4nm x 4nm x 33nm
+                self.voxel_size = [4, 4, 33]
+                logger.warning("Could not get voxel size from CloudVolume, using default H01 values")
             
             logger.info(f"Voxel size: {self.voxel_size}")
             
@@ -150,10 +148,15 @@ class H01DataLoader:
             # Load chunk from CloudVolume
             chunk = self.volume[z:z_end, y:y_end, x:x_end]
             
-            # Pad if necessary
+            # The H01 dataset can be 4D (z,y,x,channel), so we squeeze it to 3D
+            if chunk.ndim == 4:
+                chunk = np.squeeze(chunk, axis=3)
+
+            # Pad if necessary to ensure consistent chunk sizes
             if chunk.shape != chunk_size:
                 padded_chunk = np.zeros(chunk_size, dtype=self.volume.dtype)
-                padded_chunk[:z_end-z, :y_end-y, :x_end-x] = chunk
+                # Use the actual chunk shape for slicing to prevent errors at the boundary
+                padded_chunk[:chunk.shape[0], :chunk.shape[1], :chunk.shape[2]] = chunk
                 return padded_chunk
             
             return chunk

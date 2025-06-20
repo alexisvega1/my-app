@@ -6,10 +6,12 @@
 data_source:
   type: "cloudvolume"
   cloudvolume:
-    # 4nm EM data - the raw electron microscopy data
-    cloud_path: "gs://h01-release/data/20210601/4nm_raw"
-    mip: 0  # Use highest resolution
-    bounds: [[0, 0, 0], [1000, 1000, 1000]]  # Start with a small region for testing
+    # Publicly available H01 raw data at 4nm resolution
+    cloud_path: 'gs://h01-release/data/20210601/4nm_raw'
+    # The resolution level (mip level) to access. 0 is the highest resolution.
+    mip: 0
+    # A small 100x512x512 region near the origin for stable testing
+    bounds: [[1000, 1000, 1000], [1100, 1512, 1512]]
     # Full bounds: [[0, 0, 0], [100000, 100000, 100000]]  # Full dataset is massive
     
     # Alternative data sources available:
@@ -137,34 +139,17 @@ validation:
 
 # H01 dataset regions for testing
 h01_regions:
-  # Small test region (1GB)
-  test_region:
-    bounds: [[0, 0, 0], [1000, 1000, 1000]]
-    description: "Small test region for validation"
+  test_region_1:
+    description: "A small, well-characterized region for initial testing and validation."
+    bounds: [[1000, 1000, 1000], [1100, 1512, 1512]]
   
-  # Medium region (10GB)
-  medium_region:
-    bounds: [[0, 0, 0], [3000, 3000, 3000]]
-    description: "Medium region for processing"
-  
-  # Large region (100GB+)
-  large_region:
-    bounds: [[0, 0, 0], [10000, 10000, 10000]]
-    description: "Large region for production processing"
-  
-  # Specific regions of interest
-  regions_of_interest:
-    - name: "cortical_layer_1"
-      bounds: [[5000, 5000, 5000], [6000, 6000, 6000]]
-      description: "Cortical layer 1 region"
-    
-    - name: "blood_vessel_region"
-      bounds: [[7000, 7000, 7000], [8000, 8000, 8000]]
-      description: "Region with blood vessels"
-    
-    - name: "synapse_dense_region"
-      bounds: [[9000, 9000, 9000], [10000, 10000, 10000]]
-      description: "Synapse-dense region"
+  dendritic_arbor:
+    description: "A region known to contain complex dendritic arborizations."
+    bounds: [[1500, 1500, 1500], [1600, 2524, 2524]]
+
+  axon_bundle:
+    description: "A region featuring a dense bundle of axons."
+    bounds: [[2000, 2000, 2000], [2100, 2512, 2512]]
 
 # Data access settings
 data_access:
@@ -176,7 +161,7 @@ data_access:
   # Caching settings
   caching:
     enabled: true
-    cache_dir: "./h01_cache"
+    cache_dir: './h01_cache'
     max_cache_size: "50GB"
     cache_ttl_hours: 24
   

@@ -1,0 +1,45 @@
+FFN-v2 Optimization Insights from Math Books
+==================================================
+
+GRADIENT_OPTIMIZATION:
+  • Use adaptive learning rates based on gradient magnitude
+  • Implement gradient clipping to prevent explosion
+  • Apply momentum for better convergence
+  • Use second-order methods when computationally feasible
+  • Monitor gradient norms for training stability
+
+CONVEX_OPTIMIZATION:
+  • Ensure loss function is convex or quasi-convex
+  • Use proper regularization to maintain convexity
+  • Apply early stopping to prevent overfitting
+  • Monitor convergence with proper metrics
+  • Use convex optimization guarantees when possible
+
+NUMERICAL_METHODS:
+  • Use stable numerical algorithms
+  • Implement proper initialization strategies
+  • Apply numerical stability techniques
+  • Use mixed precision for efficiency
+  • Avoid numerical underflow/overflow
+
+NEURAL_OPTIMIZATION:
+  • Use advanced optimizers (AdamW, RAdam)
+  • Implement learning rate scheduling
+  • Apply batch normalization for stability
+  • Use residual connections for gradient flow
+  • Apply dropout for regularization
+
+MATRIX_OPTIMIZATION:
+  • Optimize matrix operations for GPU
+  • Use efficient tensor operations
+  • Apply proper weight initialization
+  • Use orthogonal initialization for deep networks
+  • Leverage matrix decomposition techniques
+
+ADVANCED_TECHNIQUES:
+  • Use curriculum learning for complex tasks
+  • Implement adaptive batch sizes
+  • Apply gradient accumulation for large models
+  • Use model parallelism when needed
+  • Implement checkpointing for long training
+
