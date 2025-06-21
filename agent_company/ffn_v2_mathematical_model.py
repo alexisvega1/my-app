@@ -1,106 +1,123 @@
 import torch
 import torch.nn as nn
-import math
+import torch.nn.functional as F
 
-class MathematicalFFNv2(nn.Module):
+class UNet3D(nn.Module):
     """
-    Enhanced FFN-v2 with mathematical optimization insights
-    Based on matrix analysis and optimization theory from textbooks
+    A 3D U-Net architecture, which is state-of-the-art for volumetric segmentation.
+    This model uses an encoder-decoder structure with skip connections to capture
+    both context and localization information.
     """
-    
-    def __init__(self, input_channels: int = 1, output_channels: int = 1, 
-                 hidden_channels: int = 64, depth: int = 3):
-        super().__init__()
-        
-        self.input_channels = input_channels
-        self.output_channels = output_channels
-        self.hidden_channels = hidden_channels
-        self.depth = depth
-        
-        # Core FFN-v2 architecture with mathematical enhancements
-        self.layers = nn.ModuleList()
-        
-        # Input layer with mathematical normalization
-        self.layers.append(nn.Sequential(
-            nn.Conv3d(input_channels, hidden_channels, 1),
-            nn.BatchNorm3d(hidden_channels),  # Internal covariate shift reduction
-            nn.ReLU(inplace=True)
-        ))
-        
-        # Hidden layers with residual connections and mathematical optimizations
-        for i in range(depth - 1):
-            layer = nn.Sequential(
-                nn.Conv3d(hidden_channels, hidden_channels, 1),
-                nn.BatchNorm3d(hidden_channels),
-                nn.ReLU(inplace=True),
-                nn.Conv3d(hidden_channels, hidden_channels, 1),
-                nn.BatchNorm3d(hidden_channels)
+
+    def __init__(self, in_channels, out_channels, n_levels=4, initial_features=32):
+        super(UNet3D, self).__init__()
+
+        features = initial_features
+        self.encoder_layers = nn.ModuleList()
+        self.decoder_layers = nn.ModuleList()
+
+        # Encoder path (downsampling)
+        for i in range(n_levels):
+            self.encoder_layers.append(
+                ConvBlock(in_channels if i == 0 else features, features, features)
             )
-            self.layers.append(layer)
-        
-        # Output layer with mathematical activation
-        self.output_layer = nn.Sequential(
-            nn.Conv3d(hidden_channels, output_channels, 1),
-            nn.Sigmoid()  # Bounded output for segmentation
-        )
-        
-        # Mathematical regularization components
-        self.dropout = nn.Dropout3d(0.1)  # Stochastic regularization
-        
-        # Apply mathematical weight initialization
-        self._init_weights_mathematically()
+            features *= 2
 
-    def _init_weights_mathematically(self):
-        """Mathematical weight initialization based on matrix analysis"""
-        def init_weights(m):
-            if isinstance(m, nn.Conv3d):
-                # Xavier/Glorot initialization for optimal gradient flow
-                nn.init.xavier_uniform_(m.weight)
-                if m.bias is not None:
-                    nn.init.zeros_(m.bias)
-            elif isinstance(m, nn.BatchNorm3d):
-                nn.init.ones_(m.weight)
-                nn.init.zeros_(m.bias)
+        # Bottleneck
+        self.bottleneck = ConvBlock(features // 2, features, features)
+
+        # Decoder path (upsampling)
+        for i in range(n_levels):
+            self.decoder_layers.append(
+                UpConvBlock(features, features // 2, features // 2)
+            )
+            features //= 2
+
+        # Final convolution
+        self.final_conv = nn.Conv3d(features, out_channels, kernel_size=1)
+
+    def forward(self, x):
+        skip_connections = []
         
-        self.apply(init_weights)
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass with mathematical optimizations"""
-        
-        # Input normalization for numerical stability
-        x = self._normalize_input(x)
-        
-        # Apply layers with residual connections
-        for i, layer in enumerate(self.layers):
-            identity = x
+        # Encoder
+        for level, layer in enumerate(self.encoder_layers):
             x = layer(x)
-            
-            # Residual connection for gradient flow (mathematical insight)
-            if x.shape == identity.shape:
-                x = x + identity
-            
-            # Stochastic regularization (except for the last layer)
-            if i < len(self.layers) - 1:
-                x = self.dropout(x)
+            skip_connections.append(x)
+            x = F.max_pool3d(x, kernel_size=2, stride=2)
+
+        # Bottleneck
+        x = self.bottleneck(x)
+
+        # Decoder
+        skip_connections.reverse()
+        for i, layer in enumerate(self.decoder_layers):
+            x = layer(x, skip_connections[i])
+
+        # Final output
+        x = self.final_conv(x)
+        return torch.sigmoid(x)
+
+
+class ConvBlock(nn.Module):
+    """A double convolution block."""
+    def __init__(self, in_channels, mid_channels, out_channels):
+        super(ConvBlock, self).__init__()
+        self.conv_block = nn.Sequential(
+            nn.Conv3d(in_channels, mid_channels, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm3d(mid_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv3d(mid_channels, out_channels, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm3d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self, x):
+        return self.conv_block(x)
+
+
+class UpConvBlock(nn.Module):
+    """An upsampling block followed by a convolution block."""
+    def __init__(self, in_channels, skip_channels, out_channels):
+        super(UpConvBlock, self).__init__()
+        self.up = nn.ConvTranspose3d(in_channels, in_channels // 2, kernel_size=2, stride=2)
+        self.conv = ConvBlock(in_channels // 2 + skip_channels, out_channels, out_channels)
+
+    def forward(self, x, skip_x):
+        x = self.up(x)
         
-        # Output with mathematical constraints
-        output = self.output_layer(x)
-        
-        return output
-    
-    def _normalize_input(self, x: torch.Tensor) -> torch.Tensor:
-        """Mathematical input normalization"""
-        # Ensure input is in valid range [0, 1]
-        x = torch.clamp(x, 0, 1)
-        return x 
+        # Handle padding differences if necessary
+        if x.shape != skip_x.shape:
+            # This can happen if input size is not a power of 2
+            # We crop the skip connection to match the upsampled feature map
+            diff_z = skip_x.size()[2] - x.size()[2]
+            diff_y = skip_x.size()[3] - x.size()[3]
+            diff_x = skip_x.size()[4] - x.size()[4]
+            skip_x = skip_x[:, :, diff_z // 2 : diff_z // 2 + x.size()[2],
+                            diff_y // 2 : diff_y // 2 + x.size()[3],
+                            diff_x // 2 : diff_x // 2 + x.size()[4]]
+
+        x = torch.cat([x, skip_x], dim=1)
+        return self.conv(x)
+
+# For backward compatibility, we can wrap the U-Net in the original class name
+class MathematicalFFNv2(UNet3D):
+    def __init__(self, input_channels: int = 1, output_channels: int = 3, 
+                 hidden_channels: int = 32, depth: int = 4):
+        # Map old parameters to new U-Net parameters
+        super().__init__(
+            in_channels=input_channels, 
+            out_channels=output_channels,
+            n_levels=depth,
+            initial_features=hidden_channels
+        )
 
 # ============================================================================
 # MODEL TESTING AND VERIFICATION
 # ============================================================================
 
-def test_mathematical_ffn_v2():
-    """Test the MathematicalFFNv2 model to ensure it works correctly."""
-    print("🧪 Testing MathematicalFFNv2 Model...")
+def test_unet3d_model():
+    """Test the UNet3D model to ensure it works correctly."""
+    print("🧪 Testing UNet3D Model...")
     print("=" * 50)
     
     try:
@@ -111,9 +128,9 @@ def test_mathematical_ffn_v2():
         # Create model
         model = MathematicalFFNv2(
             input_channels=1,
-            output_channels=1,
-            hidden_channels=64,
-            depth=3
+            output_channels=3,
+            hidden_channels=32,
+            depth=4
         )
         model.to(device)
         print("✅ Model created successfully")
@@ -124,7 +141,7 @@ def test_mathematical_ffn_v2():
         print(f"📊 Model parameters: {total_params:,} total, {trainable_params:,} trainable")
         
         # Test forward pass
-        batch_size = 2
+        batch_size = 1
         input_shape = (batch_size, 1, 64, 64, 64)  # Batch, Channels, Z, Y, X
         test_input = torch.randn(input_shape, device=device)
         
@@ -137,6 +154,10 @@ def test_mathematical_ffn_v2():
         print(f"   - Output shape: {output.shape}")
         print(f"   - Output range: [{output.min():.4f}, {output.max():.4f}]")
         print(f"   - Output mean: {output.mean():.4f}")
+        
+        # Verify output shape
+        assert output.shape == (1, 3, 64, 64, 64)
+        print("✅ Output shape is correct.")
         
         # Verify output is in valid range [0, 1] (due to Sigmoid)
         if 0 <= output.min() <= output.max() <= 1:
@@ -176,7 +197,7 @@ def test_mathematical_ffn_v2():
         else:
             print("⚠️ Warning: No gradients detected")
         
-        print("\n🎉 MathematicalFFNv2 model test completed successfully!")
+        print("\n🎉 UNet3D model test completed successfully!")
         print("✅ Model is ready for training on H01 data.")
         
         return True
@@ -189,4 +210,4 @@ def test_mathematical_ffn_v2():
 
 if __name__ == "__main__":
     # Run the test when the file is executed directly
-    test_mathematical_ffn_v2() 
+    test_unet3d_model() 
