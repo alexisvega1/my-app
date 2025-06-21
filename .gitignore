@@ -146,3 +146,37 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Local data and output directories
+/agent_company/cell_density_output/
+/agent_company/checkpoints/
+/agent_company/h01_cache/
+/agent_company/h01_mock_test_cache/
+/agent_company/h01_production_batch/
+/agent_company/h01_real_h01_data_region_400000_400000_4000/
+/agent_company/h01_test_cache/
+/agent_company/neuron_tracing_results/
+/agent_company/production_output/
+/agent_company/simulated_tracing_results/
+/agent_company/test_output/
+/agent_company/tracing_test_test_complex_neurons/
+/agent_company/tracing_test_test_dense_network/
+/agent_company/tracing_test_test_simple_neurons/
+/agent_company/tracing_test_test_sparse_neurons/
+/agent_company/visualization_export/
+/H01_Matlab_analysis_scripts/
+
+# Ignore vendor directories cloned by scripts
+/vendor/
+/optimizers/
+/pytorch_connectomics/
+/sam2/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
