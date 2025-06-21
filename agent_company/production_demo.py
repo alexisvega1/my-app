@@ -142,6 +142,12 @@ def main():
     """Main execution function."""
     logger.info("======== Starting Production Demo ========")
     
+    # Check if the model checkpoint exists
+    if not os.path.exists('best_mathematical_ffn_v2.pt'):
+        logger.error("Model checkpoint 'best_mathematical_ffn_v2.pt' not found!")
+        logger.error("Please ensure the model is trained and the checkpoint is in the `agent_company` directory.")
+        return
+
     tracer = ProductionAgenticTracer()
     if not tracer.initialize_components():
         logger.error("Stopping demo due to initialization failure.")
@@ -163,4 +169,4 @@ def main():
     logger.info("======== Production Demo Finished ========")
 
 if __name__ == "__main__":
-    main() 
+    main()
