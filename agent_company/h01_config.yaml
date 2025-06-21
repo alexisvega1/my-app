@@ -1,24 +1,175 @@
 # H01 Dataset Configuration for Agentic Tracer
-# ===========================================
-# Based on https://h01-release.storage.googleapis.com/data.html
+# Based on Google FFN patterns and H01 release data
+# https://h01-release.storage.googleapis.com/data.html
 
-# Data Source Configuration
+# Data source configuration
 data_source:
-  type: "cloudvolume"
+  type: "h01"
   cloudvolume:
-    # Publicly available H01 raw data at 4nm resolution
-    cloud_path: 'gs://h01-release/data/20210601/4nm_raw'
-    # The resolution level (mip level) to access. 0 is the highest resolution.
-    mip: 0
-    # A small 100x512x512 region near the origin for stable testing
-    bounds: [[1000, 1000, 1000], [1100, 1512, 1512]]
-    # Full bounds: [[0, 0, 0], [100000, 100000, 100000]]  # Full dataset is massive
+    cloud_path: "gs://h01-release/data/20210601/4nm_raw"
+    mip: 0  # Base resolution
+    bounds: [[0, 0, 0], [1000, 1000, 1000]]  # Default bounds
+
+# H01 specific regions (based on the dataset structure)
+h01_regions:
+  test_region:
+    bounds: [[1000, 1000, 1000], [2000, 2000, 2000]]
+    description: "Small test region for validation"
+    size_gb: 0.001
+  
+  validation_region:
+    bounds: [[5000, 5000, 5000], [10000, 10000, 10000]]
+    description: "Medium validation region"
+    size_gb: 0.125
+  
+  training_region:
+    bounds: [[10000, 10000, 10000], [20000, 20000, 20000]]
+    description: "Large training region"
+    size_gb: 1.0
+  
+  production_region:
+    bounds: [[20000, 20000, 20000], [40000, 40000, 40000]]
+    description: "Production-scale region"
+    size_gb: 8.0
+
+# Data access configuration
+data_access:
+  caching:
+    enabled: true
+    cache_dir: "./h01_cache"
+    max_size_gb: 10.0
+  
+  chunking:
+    default_chunk_size: [64, 64, 64]
+    overlap: [8, 8, 8]
+  
+  retry:
+    max_attempts: 3
+    backoff_factor: 2.0
+    timeout_seconds: 30
+
+# Model configuration for H01
+model:
+  name: "MathematicalFFNv2"
+  input_shape: [64, 64, 64]
+  output_channels: 1
+  
+  # H01-specific model parameters
+  fov_size: [33, 33, 33]
+  deltas: [8, 8, 8]
+  depth: 12
+  
+  # Training parameters optimized for H01
+  batch_size: 4
+  learning_rate: 0.001
+  num_epochs: 100
+  
+  # H01 voxel size: 4nm x 4nm x 33nm
+  voxel_size: [4, 4, 33]
+
+# Training configuration
+training:
+  # Coordinate sampling (similar to Google FFN)
+  coordinate_sampling:
+    method: "uniform"
+    margin: [24, 24, 24]  # Based on fov_size + deltas
+    min_size: 10000
+  
+  # Data augmentation for H01
+  augmentation:
+    enabled: true
+    rotation: true
+    flip: true
+    noise: true
+    intensity_scale: [0.8, 1.2]
+  
+  # Validation settings
+  validation:
+    frequency: 100  # Validate every 100 steps
+    region: "validation_region"
+  
+  # Checkpointing
+  checkpointing:
+    frequency: 500  # Save every 500 steps
+    keep_last: 5
+    save_dir: "./h01_checkpoints"
+
+# Inference configuration
+inference:
+  # Flood-filling parameters
+  flood_filling:
+    threshold: 0.5
+    min_size: 1000
+    max_size: 1000000
+  
+  # Seed point selection
+  seed_selection:
+    method: "random"
+    num_seeds: 100
+    min_distance: 50
+  
+  # Output format
+  output:
+    format: "npz"  # NumPy compressed format
+    include_probabilities: true
+    compression: "gzip"
+
+# Monitoring and logging
+monitoring:
+  enabled: true
+  log_level: "INFO"
+  
+  # Metrics to track
+  metrics:
+    - "loss"
+    - "accuracy"
+    - "dice_score"
+    - "memory_usage"
+    - "data_load_time"
+  
+  # Visualization
+  visualization:
+    enabled: true
+    frequency: 50
+    save_dir: "./h01_visualizations"
+
+# Robustness testing
+robustness:
+  enabled: true
+  
+  # Test scenarios
+  test_scenarios:
+    - name: "small_region"
+      region: "test_region"
+      description: "Test with small region"
     
-    # Alternative data sources available:
-    # - "gs://h01-release/data/20210601/masking"  # Masking model
-    # - "gs://h01-release/data/20210601/c2/"      # C2 segmentation
-    # - "gs://h01-release/data/20210601/c3/"      # C3 segmentation
-    # - "gs://h01-release/data/20210601/proofread_104"  # 104 proofread cells
+    - name: "medium_region"
+      region: "validation_region"
+      description: "Test with medium region"
+    
+    - name: "large_region"
+      region: "training_region"
+      description: "Test with large region"
+  
+  # Performance benchmarks
+  benchmarks:
+    memory_limit_gb: 16.0
+    time_limit_seconds: 3600
+    accuracy_threshold: 0.8
+
+# Environment-specific settings
+environment:
+  colab:
+    # Colab-specific optimizations
+    use_mixed_precision: true
+    memory_growth: true
+    data_parallel: false
+    
+  local:
+    # Local development settings
+    use_mixed_precision: false
+    memory_growth: false
+    data_parallel: true
 
 # Processing Configuration (optimized for H01 data)
 processing:
@@ -30,25 +181,6 @@ processing:
   num_threads: 8               # Thread pool size
   max_memory_gb: 32            # H01 data is memory-intensive
   cache_size: "8GB"            # Large cache for cloud data
-
-# Model Configuration
-model:
-  ffn_v2:
-    model_path: "quick_ffn_v2_model.pt"
-    input_channels: 1
-    hidden_channels: [32, 64, 128, 256]  # Larger model for H01 complexity
-    output_channels: 1
-    use_attention: true
-    dropout_rate: 0.1
-  
-  continual_learning:
-    enabled: true
-    adaptation_strategy: "low_rank"
-    rank: 32                    # Higher rank for complex H01 data
-    alpha: 64.0                 # Higher alpha for better adaptation
-    learning_rate: 5e-5         # Lower learning rate for stability
-    batch_size: 16
-    num_epochs: 5
 
 # Proofreading Configuration (optimized for H01)
 proofreading:
@@ -136,20 +268,6 @@ validation:
     - "continual_learning_progress"
     - "system_performance"
     - "data_consistency"
-
-# H01 dataset regions for testing
-h01_regions:
-  test_region_1:
-    description: "A small, well-characterized region for initial testing and validation."
-    bounds: [[1000, 1000, 1000], [1100, 1512, 1512]]
-  
-  dendritic_arbor:
-    description: "A region known to contain complex dendritic arborizations."
-    bounds: [[1500, 1500, 1500], [1600, 2524, 2524]]
-
-  axon_bundle:
-    description: "A region featuring a dense bundle of axons."
-    bounds: [[2000, 2000, 2000], [2100, 2512, 2512]]
 
 # Data access settings
 data_access:

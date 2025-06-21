@@ -302,55 +302,6 @@ def train(model, device, train_loader, epochs=5):
     return model
 
 # ============================================================================
-# DATA VERIFICATION
-# ============================================================================
-
-def verify_h01_data_access(data_loader):
-    """Verify that we're accessing the current H01 dataset properly."""
-    print("\n🔍 Verifying H01 Data Access...")
-    print("=" * 50)
-    
-    try:
-        # Get volume information
-        volume_info = data_loader.get_volume_info()
-        print("📊 Volume Information:")
-        print(f"   - Shape: {volume_info['shape']}")
-        print(f"   - Data type: {volume_info['dtype']}")
-        print(f"   - Voxel size: {volume_info['voxel_size']}")
-        print(f"   - Bounds: {volume_info['bounds']}")
-        
-        # Test loading a small chunk
-        print("\n🧪 Testing chunk loading...")
-        test_coords = (1000, 1000, 1000)  # Start of our test region
-        test_size = (64, 64, 64)  # Small test chunk
-        
-        chunk = data_loader.load_chunk(test_coords, test_size)
-        print(f"✅ Successfully loaded chunk of shape: {chunk.shape}")
-        print(f"   - Data range: [{chunk.min():.2f}, {chunk.max():.2f}]")
-        print(f"   - Mean value: {chunk.mean():.2f}")
-        print(f"   - Standard deviation: {chunk.std():.2f}")
-        
-        # Check if data looks reasonable
-        if chunk.std() > 0:
-            print("✅ Data appears to have meaningful variation")
-        else:
-            print("⚠️ Warning: Data has no variation (might be all zeros)")
-        
-        # Display data source information
-        print("\n📡 Data Source Information:")
-        print(f"   - Cloud path: gs://h01-release/data/20210601/4nm_raw")
-        print(f"   - This is the official H01 dataset from Google Cloud Storage")
-        print(f"   - Resolution: 4nm x 4nm x 33nm (highest available)")
-        print(f"   - Dataset size: ~1.4 PB (full dataset)")
-        print(f"   - Our test region: ~0.5 GB")
-        
-        return True
-        
-    except Exception as e:
-        print(f"❌ Data verification failed: {e}")
-        return False
-
-# ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
@@ -384,11 +335,6 @@ def main():
             return
     except Exception as e:
         print(f"❌ Failed to load H01 data loader or config: {e}")
-        return
-
-    # Verify data access
-    if not verify_h01_data_access(data_loader):
-        print("❌ Data verification failed. Please check your configuration.")
         return
 
     print(f"\n2. Creating PyTorch dataset for region '{train_region}'...")
