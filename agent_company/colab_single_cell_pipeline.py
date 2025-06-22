@@ -245,7 +245,7 @@ def run_pipeline():
         with open('agent_company/h01_config.yaml', 'r') as f:
             h01_config = yaml.safe_load(f)
     except FileNotFoundError:
-        h01_config = {'volume_path': 'graphene://h01-release/', 'mip': 1}
+        h01_config = {'volume_path': 'graphene://https://h01-materialization.cr.neuroglancer.org/1.0/h01_c3_flat', 'mip': 0}
     
     try:
         with open('agent_company/h01_colab_config.yaml', 'r') as f:

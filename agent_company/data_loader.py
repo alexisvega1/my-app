@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 """
-Production Data Loader for Agentic Tracer
-=========================================
-Handles multiple data source types with proper error handling and validation.
+Enhanced data loader for connectomics pipeline with improved error handling,
+memory management, and caching capabilities.
 """
 
 import os
 import logging
 import yaml
 import numpy as np
+import torch
+from torch.utils.data import Dataset, DataLoader, IterableDataset
 from typing import Dict, Any, Optional, Tuple, List, Union
 from pathlib import Path
 import glob
+import time
+import pickle
+import hashlib
+from functools import lru_cache
+import warnings
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +35,7 @@ try:
     CLOUDVOLUME_AVAILABLE = True
 except ImportError:
     CLOUDVOLUME_AVAILABLE = False
-    logger.warning("CloudVolume not available - cloud data sources disabled")
+    warnings.warn("CloudVolume not available. Data loading will be limited.")
 
 try:
     import h5py
@@ -42,307 +48,400 @@ class DataSourceError(Exception):
     """Custom exception for data source errors."""
     pass
 
-class DataLoader:
-    """Production data loader for multiple data source types."""
+class H01DataLoader:
+    """
+    Enhanced H01 data loader with improved error handling and caching.
+    """
     
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config, cache_dir: str = "h01_cache"):
+        """
+        Initialize the H01 data loader.
+        
+        Args:
+            config: Configuration object with data settings
+            cache_dir: Directory for caching data
+        """
         self.config = config
-        self.data_source_config = config.get('data_source', {})
-        self.source_type = self.data_source_config.get('type', 'numpy')
+        self.cache_dir = Path(cache_dir)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
         
-        # Validate configuration
-        self._validate_config()
+        self.volume = None
+        self.volume_size = None
+        self.resolution = None
         
-        logger.info(f"Data loader initialized for {self.source_type} data source")
+        self._initialize_volume()
+        self._setup_cache()
     
-    def _validate_config(self):
-        """Validate the data source configuration."""
-        if self.source_type == 'numpy':
-            if 'numpy' not in self.data_source_config:
-                raise DataSourceError("Numpy data source requires 'numpy' configuration section")
-            
-            numpy_config = self.data_source_config['numpy']
-            if 'base_path' not in numpy_config:
-                raise DataSourceError("Numpy data source requires 'base_path'")
-            
-            if not os.path.exists(numpy_config['base_path']):
-                logger.warning(f"Numpy base path does not exist: {numpy_config['base_path']}")
-        
-        elif self.source_type == 'zarr':
-            if not ZARR_AVAILABLE:
-                raise DataSourceError("Zarr data source requires zarr package")
-            
-            if 'zarr' not in self.data_source_config:
-                raise DataSourceError("Zarr data source requires 'zarr' configuration section")
-            
-            zarr_config = self.data_source_config['zarr']
-            if 'store_path' not in zarr_config:
-                raise DataSourceError("Zarr data source requires 'store_path'")
-        
-        elif self.source_type == 'cloudvolume':
-            if not CLOUDVOLUME_AVAILABLE:
-                raise DataSourceError("CloudVolume data source requires cloudvolume package")
-            
-            if 'cloudvolume' not in self.data_source_config:
-                raise DataSourceError("CloudVolume data source requires 'cloudvolume' configuration section")
-            
-            cv_config = self.data_source_config['cloudvolume']
-            if 'cloud_path' not in cv_config:
-                raise DataSourceError("CloudVolume data source requires 'cloud_path'")
-        
-        elif self.source_type == 'hdf5':
-            if not H5PY_AVAILABLE:
-                raise DataSourceError("HDF5 data source requires h5py package")
-            
-            if 'hdf5' not in self.data_source_config:
-                raise DataSourceError("HDF5 data source requires 'hdf5' configuration section")
-            
-            h5_config = self.data_source_config['hdf5']
-            if 'file_path' not in h5_config:
-                raise DataSourceError("HDF5 data source requires 'file_path'")
-        
-        else:
-            raise DataSourceError(f"Unsupported data source type: {self.source_type}")
-    
-    def get_volume_info(self) -> Dict[str, Any]:
-        """Get information about the volume (shape, dtype, etc.)."""
-        try:
-            if self.source_type == 'numpy':
-                return self._get_numpy_volume_info()
-            elif self.source_type == 'zarr':
-                return self._get_zarr_volume_info()
-            elif self.source_type == 'cloudvolume':
-                return self._get_cloudvolume_volume_info()
-            elif self.source_type == 'hdf5':
-                return self._get_hdf5_volume_info()
-            else:
-                raise DataSourceError(f"Unsupported data source type: {self.source_type}")
-        except Exception as e:
-            logger.error(f"Failed to get volume info: {e}")
-            raise DataSourceError(f"Failed to get volume info: {e}")
-    
-    def _get_numpy_volume_info(self) -> Dict[str, Any]:
-        """Get volume info for numpy data source."""
-        numpy_config = self.data_source_config['numpy']
-        base_path = numpy_config['base_path']
-        file_pattern = numpy_config.get('file_pattern', '*.npy')
-        
-        # Find numpy files
-        pattern = os.path.join(base_path, file_pattern)
-        files = glob.glob(pattern)
-        
-        if not files:
-            raise DataSourceError(f"No files found matching pattern: {pattern}")
-        
-        # Load first file to get info
-        first_file = files[0]
-        try:
-            data = np.load(first_file, mmap_mode='r')
-            return {
-                'shape': data.shape,
-                'dtype': str(data.dtype),
-                'num_files': len(files),
-                'file_size_gb': os.path.getsize(first_file) / (1024**3),
-                'total_size_gb': sum(os.path.getsize(f) for f in files) / (1024**3),
-                'files': files
-            }
-        except Exception as e:
-            raise DataSourceError(f"Failed to load numpy file {first_file}: {e}")
-    
-    def _get_zarr_volume_info(self) -> Dict[str, Any]:
-        """Get volume info for zarr data source."""
-        zarr_config = self.data_source_config['zarr']
-        store_path = zarr_config['store_path']
-        dataset_name = zarr_config.get('dataset_name', 'data')
+    def _initialize_volume(self):
+        """Initialize the CloudVolume connection with error handling."""
+        if not CLOUDVOLUME_AVAILABLE:
+            raise ImportError("CloudVolume is required but not available")
         
         try:
-            store = zarr.open(store_path, mode='r')
-            dataset = store[dataset_name]
+            logger.info(f"Initializing CloudVolume with path: {self.config.data.volume_path}")
+            self.volume = CloudVolume(
+                self.config.data.volume_path,
+                mip=self.config.data.mip,
+                cache=str(self.cache_dir),
+                parallel=True,
+                progress=False
+            )
             
-            return {
-                'shape': dataset.shape,
-                'dtype': str(dataset.dtype),
-                'chunks': dataset.chunks,
-                'compressor': str(dataset.compressor),
-                'size_gb': dataset.nbytes / (1024**3)
-            }
+            # Get volume information
+            self.volume_size = self.volume.mip_volume_size(self.config.data.mip)
+            self.resolution = self.volume.mip_resolution(self.config.data.mip)
+            
+            logger.info(f"Volume initialized successfully")
+            logger.info(f"Volume size: {self.volume_size}")
+            logger.info(f"Resolution: {self.resolution}")
+            
         except Exception as e:
-            raise DataSourceError(f"Failed to get zarr volume info: {e}")
+            logger.error(f"Failed to initialize CloudVolume: {e}")
+            raise
     
-    def _get_cloudvolume_volume_info(self) -> Dict[str, Any]:
-        """Get volume info for cloudvolume data source."""
-        cv_config = self.data_source_config['cloudvolume']
-        cloud_path = cv_config['cloud_path']
-        
+    def _setup_cache(self):
+        """Setup caching system."""
+        self.cache_metadata_file = self.cache_dir / "cache_metadata.pkl"
+        self.cache_metadata = self._load_cache_metadata()
+    
+    def _load_cache_metadata(self) -> Dict[str, Any]:
+        """Load cache metadata from disk."""
+        if self.cache_metadata_file.exists():
+            try:
+                with open(self.cache_metadata_file, 'rb') as f:
+                    return pickle.load(f)
+            except Exception as e:
+                logger.warning(f"Failed to load cache metadata: {e}")
+        return {}
+    
+    def _save_cache_metadata(self):
+        """Save cache metadata to disk."""
         try:
-            vol = CloudVolume(cloud_path)
-            return {
-                'shape': vol.shape,
-                'dtype': str(vol.dtype),
-                'voxel_size': vol.voxel_size,
-                'mip': vol.mip,
-                'size_gb': np.prod(vol.shape) * vol.dtype.itemsize / (1024**3)
-            }
+            with open(self.cache_metadata_file, 'wb') as f:
+                pickle.dump(self.cache_metadata, f)
         except Exception as e:
-            raise DataSourceError(f"Failed to get cloudvolume info: {e}")
+            logger.warning(f"Failed to save cache metadata: {e}")
     
-    def _get_hdf5_volume_info(self) -> Dict[str, Any]:
-        """Get volume info for HDF5 data source."""
-        h5_config = self.data_source_config['hdf5']
-        file_path = h5_config['file_path']
-        dataset_name = h5_config.get('dataset_name', '/data')
+    def _get_cache_key(self, coords: Tuple[int, int, int], size: Tuple[int, int, int]) -> str:
+        """Generate a cache key for the given coordinates and size."""
+        key_data = f"{coords}_{size}_{self.config.data.mip}"
+        return hashlib.md5(key_data.encode()).hexdigest()
+    
+    def _get_cache_path(self, cache_key: str) -> Path:
+        """Get the cache file path for a given key."""
+        return self.cache_dir / f"{cache_key}.npy"
+    
+    def load_chunk(self, coords: Tuple[int, int, int], size: Tuple[int, int, int], 
+                   use_cache: bool = True) -> np.ndarray:
+        """
+        Load a chunk of data from the volume.
         
+        Args:
+            coords: (x, y, z) coordinates
+            size: (dx, dy, dz) size of the chunk
+            use_cache: Whether to use caching
+            
+        Returns:
+            Loaded data as numpy array
+        """
+        cache_key = self._get_cache_key(coords, size)
+        cache_path = self._get_cache_path(cache_key)
+        
+        # Try to load from cache first
+        if use_cache and cache_path.exists():
+            try:
+                data = np.load(cache_path)
+                logger.debug(f"Loaded chunk from cache: {coords}, {size}")
+                return data
+            except Exception as e:
+                logger.warning(f"Failed to load from cache: {e}")
+        
+        # Load from volume
         try:
-            with h5py.File(file_path, 'r') as f:
-                dataset = f[dataset_name]
-                return {
-                    'shape': dataset.shape,
-                    'dtype': str(dataset.dtype),
-                    'chunks': dataset.chunks,
-                    'compression': dataset.compression,
-                    'size_gb': dataset.nbytes / (1024**3)
-                }
+            x, y, z = coords
+            dx, dy, dz = size
+            
+            # Validate coordinates
+            if not self._validate_coordinates(coords, size):
+                raise ValueError(f"Invalid coordinates: {coords}, {size}")
+            
+            start_time = time.time()
+            data = self.volume[x:x+dx, y:y+dy, z:z+dz].squeeze()
+            load_time = time.time() - start_time
+            
+            logger.debug(f"Loaded chunk from volume: {coords}, {size} in {load_time:.2f}s")
+            
+            # Cache the data
+            if use_cache:
+                try:
+                    np.save(cache_path, data)
+                    self.cache_metadata[cache_key] = {
+                        'coords': coords,
+                        'size': size,
+                        'timestamp': time.time(),
+                        'load_time': load_time
+                    }
+                    self._save_cache_metadata()
+                except Exception as e:
+                    logger.warning(f"Failed to cache data: {e}")
+            
+            return data
+            
         except Exception as e:
-            raise DataSourceError(f"Failed to get HDF5 volume info: {e}")
+            logger.error(f"Failed to load chunk {coords}, {size}: {e}")
+            raise
     
-    def load_chunk(self, 
-                  coordinates: Tuple[int, int, int],
-                  chunk_size: Tuple[int, int, int]) -> np.ndarray:
-        """Load a chunk from the data source."""
-        try:
-            if self.source_type == 'numpy':
-                return self._load_numpy_chunk(coordinates, chunk_size)
-            elif self.source_type == 'zarr':
-                return self._load_zarr_chunk(coordinates, chunk_size)
-            elif self.source_type == 'cloudvolume':
-                return self._load_cloudvolume_chunk(coordinates, chunk_size)
-            elif self.source_type == 'hdf5':
-                return self._load_hdf5_chunk(coordinates, chunk_size)
-            else:
-                raise DataSourceError(f"Unsupported data source type: {self.source_type}")
-        except Exception as e:
-            logger.error(f"Failed to load chunk at {coordinates}: {e}")
-            raise DataSourceError(f"Failed to load chunk at {coordinates}: {e}")
-    
-    def _load_numpy_chunk(self, 
-                         coordinates: Tuple[int, int, int],
-                         chunk_size: Tuple[int, int, int]) -> np.ndarray:
-        """Load chunk from numpy file."""
-        numpy_config = self.data_source_config['numpy']
-        base_path = numpy_config['base_path']
-        
-        # For now, assume single large numpy file
-        # In production, you might have multiple files or a specific file selection strategy
-        pattern = os.path.join(base_path, numpy_config.get('file_pattern', '*.npy'))
-        files = glob.glob(pattern)
-        
-        if not files:
-            raise DataSourceError(f"No numpy files found in {base_path}")
-        
-        # Load from first file (simplified - in production you'd have a file selection strategy)
-        file_path = files[0]
-        data = np.load(file_path, mmap_mode='r')
-        
-        z, y, x = coordinates
-        z_end = min(z + chunk_size[0], data.shape[0])
-        y_end = min(y + chunk_size[1], data.shape[1])
-        x_end = min(x + chunk_size[2], data.shape[2])
-        
-        chunk = data[z:z_end, y:y_end, x:x_end]
-        
-        # Pad if necessary
-        if chunk.shape != chunk_size:
-            padded_chunk = np.zeros(chunk_size, dtype=data.dtype)
-            padded_chunk[:z_end-z, :y_end-y, :x_end-x] = chunk
-            return padded_chunk
-        
-        return chunk
-    
-    def _load_zarr_chunk(self,
-                        coordinates: Tuple[int, int, int],
-                        chunk_size: Tuple[int, int, int]) -> np.ndarray:
-        """Load chunk from zarr store."""
-        zarr_config = self.data_source_config['zarr']
-        store_path = zarr_config['store_path']
-        dataset_name = zarr_config.get('dataset_name', 'data')
-        
-        store = zarr.open(store_path, mode='r')
-        dataset = store[dataset_name]
-        
-        z, y, x = coordinates
-        z_end = min(z + chunk_size[0], dataset.shape[0])
-        y_end = min(y + chunk_size[1], dataset.shape[1])
-        x_end = min(x + chunk_size[2], dataset.shape[2])
-        
-        chunk = dataset[z:z_end, y:y_end, x:x_end]
-        
-        # Pad if necessary
-        if chunk.shape != chunk_size:
-            padded_chunk = np.zeros(chunk_size, dtype=dataset.dtype)
-            padded_chunk[:z_end-z, :y_end-y, :x_end-x] = chunk
-            return padded_chunk
-        
-        return chunk
-    
-    def _load_cloudvolume_chunk(self,
-                               coordinates: Tuple[int, int, int],
-                               chunk_size: Tuple[int, int, int]) -> np.ndarray:
-        """Load chunk from cloudvolume."""
-        cv_config = self.data_source_config['cloudvolume']
-        cloud_path = cv_config['cloud_path']
-        
-        vol = CloudVolume(cloud_path)
-        
-        z, y, x = coordinates
-        z_end = min(z + chunk_size[0], vol.shape[0])
-        y_end = min(y + chunk_size[1], vol.shape[1])
-        x_end = min(x + chunk_size[2], vol.shape[2])
-        
-        chunk = vol[z:z_end, y:y_end, x:x_end]
-        
-        # Pad if necessary
-        if chunk.shape != chunk_size:
-            padded_chunk = np.zeros(chunk_size, dtype=vol.dtype)
-            padded_chunk[:z_end-z, :y_end-y, :x_end-x] = chunk
-            return padded_chunk
-        
-        return chunk
-    
-    def _load_hdf5_chunk(self,
-                        coordinates: Tuple[int, int, int],
-                        chunk_size: Tuple[int, int, int]) -> np.ndarray:
-        """Load chunk from HDF5 file."""
-        h5_config = self.data_source_config['hdf5']
-        file_path = h5_config['file_path']
-        dataset_name = h5_config.get('dataset_name', '/data')
-        
-        with h5py.File(file_path, 'r') as f:
-            dataset = f[dataset_name]
-            
-            z, y, x = coordinates
-            z_end = min(z + chunk_size[0], dataset.shape[0])
-            y_end = min(y + chunk_size[1], dataset.shape[1])
-            x_end = min(x + chunk_size[2], dataset.shape[2])
-            
-            chunk = dataset[z:z_end, y:y_end, x:x_end]
-            
-            # Pad if necessary
-            if chunk.shape != chunk_size:
-                padded_chunk = np.zeros(chunk_size, dtype=dataset.dtype)
-                padded_chunk[:z_end-z, :y_end-y, :x_end-x] = chunk
-                return padded_chunk
-            
-            return chunk
-    
-    def validate_data_source(self) -> bool:
-        """Validate that the data source is accessible and properly configured."""
-        try:
-            info = self.get_volume_info()
-            logger.info(f"Data source validation successful: {info}")
-            return True
-        except Exception as e:
-            logger.error(f"Data source validation failed: {e}")
+    def _validate_coordinates(self, coords: Tuple[int, int, int], 
+                            size: Tuple[int, int, int]) -> bool:
+        """Validate that coordinates and size are within volume bounds."""
+        if self.volume_size is None:
             return False
+        
+        x, y, z = coords
+        dx, dy, dz = size
+        
+        # Check if coordinates are non-negative
+        if x < 0 or y < 0 or z < 0:
+            return False
+        
+        # Check if chunk fits within volume
+        if (x + dx > self.volume_size[0] or 
+            y + dy > self.volume_size[1] or 
+            z + dz > self.volume_size[2]):
+            return False
+        
+        return True
+    
+    def get_random_valid_coords(self, chunk_size: Tuple[int, int, int]) -> Tuple[int, int, int]:
+        """Get random valid coordinates for a given chunk size."""
+        if self.volume_size is None:
+            raise RuntimeError("Volume not initialized")
+        
+        max_x = self.volume_size[0] - chunk_size[0]
+        max_y = self.volume_size[1] - chunk_size[1]
+        max_z = self.volume_size[2] - chunk_size[2]
+        
+        if max_x < 0 or max_y < 0 or max_z < 0:
+            raise ValueError(f"Chunk size {chunk_size} is larger than volume size {self.volume_size}")
+        
+        x = np.random.randint(0, max_x)
+        y = np.random.randint(0, max_y)
+        z = np.random.randint(0, max_z)
+        
+        return (x, y, z)
+    
+    def clear_cache(self):
+        """Clear all cached data."""
+        try:
+            for cache_file in self.cache_dir.glob("*.npy"):
+                cache_file.unlink()
+            self.cache_metadata.clear()
+            self._save_cache_metadata()
+            logger.info("Cache cleared successfully")
+        except Exception as e:
+            logger.error(f"Failed to clear cache: {e}")
+    
+    def get_cache_stats(self) -> Dict[str, Any]:
+        """Get cache statistics."""
+        cache_files = list(self.cache_dir.glob("*.npy"))
+        total_size = sum(f.stat().st_size for f in cache_files)
+        
+        return {
+            'num_cached_chunks': len(cache_files),
+            'total_cache_size_mb': total_size / (1024 * 1024),
+            'cache_metadata_entries': len(self.cache_metadata)
+        }
+
+
+class H01Dataset(Dataset):
+    """
+    PyTorch Dataset for H01 data with augmentation and preprocessing.
+    """
+    
+    def __init__(self, data_loader: H01DataLoader, config, 
+                 samples_per_epoch: int = 1000, augment: bool = True):
+        """
+        Initialize the dataset.
+        
+        Args:
+            data_loader: H01DataLoader instance
+            config: Configuration object
+            samples_per_epoch: Number of samples per epoch
+            augment: Whether to apply data augmentation
+        """
+        self.data_loader = data_loader
+        self.config = config
+        self.samples_per_epoch = samples_per_epoch
+        self.augment = augment
+        
+        # Pre-generate valid coordinates for faster access
+        self.valid_coords = self._generate_valid_coordinates()
+        
+        logger.info(f"Dataset initialized with {len(self.valid_coords)} valid coordinates")
+    
+    def _generate_valid_coordinates(self) -> List[Tuple[int, int, int]]:
+        """Generate a list of valid coordinates for the dataset."""
+        coords = []
+        chunk_size = tuple(self.config.data.chunk_size)
+        
+        for _ in range(self.samples_per_epoch):
+            try:
+                coord = self.data_loader.get_random_valid_coords(chunk_size)
+                coords.append(coord)
+            except Exception as e:
+                logger.warning(f"Failed to generate coordinate: {e}")
+                continue
+        
+        return coords
+    
+    def __len__(self) -> int:
+        return self.samples_per_epoch
+    
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Get a sample from the dataset."""
+        if idx >= len(self.valid_coords):
+            # Regenerate coordinates if needed
+            self.valid_coords = self._generate_valid_coordinates()
+            idx = idx % len(self.valid_coords)
+        
+        coords = self.valid_coords[idx]
+        chunk_size = tuple(self.config.data.chunk_size)
+        
+        try:
+            # Load data
+            data = self.data_loader.load_chunk(coords, chunk_size)
+            
+            # Convert to tensor
+            data_tensor = torch.from_numpy(data).float()
+            
+            # Add channel dimension if needed
+            if data_tensor.dim() == 3:
+                data_tensor = data_tensor.unsqueeze(0)  # Add channel dimension
+            
+            # Normalize data
+            data_tensor = self._normalize_data(data_tensor)
+            
+            # Apply augmentation if enabled
+            if self.augment:
+                data_tensor = self._apply_augmentation(data_tensor)
+            
+            # Create dummy target (for training, you'd load actual segmentation)
+            target = self._create_target(data_tensor)
+            
+            return data_tensor, target
+            
+        except Exception as e:
+            logger.error(f"Failed to load sample {idx}: {e}")
+            # Return a zero tensor as fallback
+            return torch.zeros((1,) + tuple(chunk_size)), torch.zeros((3,) + tuple(chunk_size))
+    
+    def _normalize_data(self, data: torch.Tensor) -> torch.Tensor:
+        """Normalize the data to [0, 1] range."""
+        if data.max() > data.min():
+            data = (data - data.min()) / (data.max() - data.min())
+        return data
+    
+    def _apply_augmentation(self, data: torch.Tensor) -> torch.Tensor:
+        """Apply data augmentation."""
+        # Random rotation
+        if np.random.random() > 0.5:
+            k = np.random.randint(1, 4)
+            data = torch.rot90(data, k, dims=[-2, -1])
+        
+        # Random flip
+        if np.random.random() > 0.5:
+            data = torch.flip(data, dims=[-1])
+        
+        # Add noise
+        if np.random.random() > 0.7:
+            noise = torch.randn_like(data) * 0.1
+            data = data + noise
+            data = torch.clamp(data, 0, 1)
+        
+        return data
+    
+    def _create_target(self, data: torch.Tensor) -> torch.Tensor:
+        """Create a dummy target tensor for training."""
+        # This is a placeholder - in real usage, you'd load actual segmentation data
+        target_shape = (3,) + data.shape[1:]  # 3 channels for segmentation
+        target = torch.zeros(target_shape)
+        
+        # Create some dummy segmentation based on data intensity
+        intensity = data.mean(dim=0, keepdim=True)
+        target[0] = (intensity > 0.5).float()  # Background
+        target[1] = (intensity > 0.3).float()  # Foreground
+        target[2] = (intensity > 0.7).float()  # High intensity
+        
+        return target
+
+
+class H01IterableDataset(IterableDataset):
+    """
+    Iterable dataset for streaming data from H01.
+    """
+    
+    def __init__(self, data_loader: H01DataLoader, config, samples_per_epoch: int = 1000):
+        self.data_loader = data_loader
+        self.config = config
+        self.samples_per_epoch = samples_per_epoch
+    
+    def __iter__(self):
+        """Iterate over the dataset."""
+        for _ in range(self.samples_per_epoch):
+            try:
+                coords = self.data_loader.get_random_valid_coords(tuple(self.config.data.chunk_size))
+                data = self.data_loader.load_chunk(coords, tuple(self.config.data.chunk_size))
+                
+                # Convert to tensor and normalize
+                data_tensor = torch.from_numpy(data).float()
+                if data_tensor.dim() == 3:
+                    data_tensor = data_tensor.unsqueeze(0)
+                
+                data_tensor = (data_tensor - data_tensor.min()) / (data_tensor.max() - data_tensor.min() + 1e-8)
+                
+                # Create dummy target
+                target = torch.zeros((3,) + data_tensor.shape[1:])
+                
+                yield data_tensor, target
+                
+            except Exception as e:
+                logger.warning(f"Failed to load sample: {e}")
+                continue
+
+
+def create_data_loader(config, dataset_type: str = "dataset") -> DataLoader:
+    """
+    Create a data loader with the specified configuration.
+    
+    Args:
+        config: Configuration object
+        dataset_type: Type of dataset ("dataset" or "iterable")
+    
+    Returns:
+        DataLoader instance
+    """
+    # Initialize H01 data loader
+    h01_loader = H01DataLoader(config)
+    
+    # Create dataset
+    if dataset_type == "dataset":
+        dataset = H01Dataset(h01_loader, config)
+    elif dataset_type == "iterable":
+        dataset = H01IterableDataset(h01_loader, config)
+    else:
+        raise ValueError(f"Unknown dataset type: {dataset_type}")
+    
+    # Create data loader
+    loader = DataLoader(
+        dataset,
+        batch_size=config.data.batch_size,
+        shuffle=(dataset_type == "dataset"),
+        num_workers=config.data.num_workers,
+        pin_memory=True,
+        prefetch_factor=config.data.prefetch_factor
+    )
+    
+    return loader
 
 def load_config(config_path: str) -> Dict[str, Any]:
     """Load configuration from YAML file."""
@@ -358,4 +457,4 @@ def load_config(config_path: str) -> Dict[str, Any]:
 def create_data_loader(config_path: str) -> DataLoader:
     """Create a data loader from configuration file."""
     config = load_config(config_path)
-    return DataLoader(config) 
+    return create_data_loader(config) 
