@@ -1,0 +1,286 @@
+# Comprehensive Connectomics Pipeline Configuration
+# ===============================================
+
+# Environment settings
+environment: "development"  # development, production, colab
+seed: 42
+deterministic: false
+
+# Data configuration
+data:
+  volume_path: "graphene://https://h01-materialization.cr.neuroglancer.org/1.0/h01_c3_flat"
+  mip: 0
+  cache_path: "h01_cache"
+  chunk_size: [128, 128, 128]  # Larger chunks for comprehensive analysis
+  batch_size: 2
+  num_workers: 4
+  prefetch_factor: 2
+
+# Model configuration
+model:
+  input_channels: 1
+  output_channels: 3
+  hidden_channels: 64  # Increased for better feature extraction
+  depth: 5  # Deeper network for complex morphology
+  dropout_rate: 0.1
+  use_batch_norm: true
+  activation: "relu"
+
+# Training configuration
+training:
+  epochs: 100
+  learning_rate: 1e-4
+  weight_decay: 1e-5
+  scheduler_patience: 10
+  scheduler_factor: 0.5
+  early_stopping_patience: 20
+  gradient_clip_val: 1.0
+  mixed_precision: true
+  accumulate_grad_batches: 1
+
+# Loss configuration
+loss:
+  dice_weight: 0.5
+  bce_weight: 0.5
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+  smooth: 1e-6
+
+# Optimization configuration
+optimization:
+  optimizer: "adamw"  # Better for complex models
+  scheduler: "cosine"
+  warmup_epochs: 5
+  max_grad_norm: 1.0
+  use_amp: true
+  num_gpus: 1
+
+# Monitoring configuration
+monitoring:
+  log_level: "INFO"
+  log_file: "comprehensive_pipeline.log"
+  tensorboard_dir: "runs"
+  save_checkpoints: true
+  checkpoint_dir: "checkpoints"
+  save_frequency: 10
+  validation_frequency: 5
+
+# Comprehensive Analysis Configuration
+comprehensive_analysis:
+  # Spine detection settings
+  spine_detection:
+    enabled: true
+    min_spine_volume: 50
+    max_spine_volume: 2000
+    spine_detection_threshold: 0.7
+    spine_classification_confidence: 0.6
+    max_spines_per_neuron: 100
+    
+    # Spine type classification parameters
+    spine_types:
+      mushroom:
+        min_length: 3.0
+        min_head_diameter: 1.5
+        min_volume: 100
+      thin:
+        min_length: 2.0
+        max_head_diameter: 1.0
+        min_volume: 50
+      stubby:
+        max_length: 1.5
+        max_volume: 100
+      filopodia:
+        min_length: 4.0
+        max_head_diameter: 0.8
+        min_volume: 30
+
+  # Molecular identity prediction
+  molecular_prediction:
+    enabled: true
+    use_allen_brain_sdk: true
+    confidence_threshold: 0.6
+    min_training_samples: 10
+    
+    # Molecular markers to predict
+    markers:
+      - "glutamatergic"
+      - "gabaergic"
+      - "cholinergic"
+      - "dopaminergic"
+      - "serotonergic"
+      - "pyramidal"
+      - "interneuron"
+      - "granule"
+      - "stellate"
+      - "basket"
+    
+    # Feature importance weights
+    feature_weights:
+      soma_volume: 1.0
+      dendritic_length: 1.0
+      dendritic_complexity: 1.0
+      branching_factor: 1.0
+      spine_density: 1.0
+      mushroom_spine_ratio: 1.0
+      thin_spine_ratio: 1.0
+      stubby_spine_ratio: 1.0
+      filopodia_ratio: 1.0
+
+  # Synapse detection
+  synapse_detection:
+    enabled: true
+    min_synapse_volume: 50
+    max_synapse_volume: 1000
+    synapse_detection_threshold: 0.6
+    synapse_classification_confidence: 0.7
+    
+    # Synapse types
+    synapse_types:
+      excitatory:
+        min_intensity: 180
+        min_volume: 80
+      inhibitory:
+        min_intensity: 160
+        min_volume: 60
+      modulatory:
+        min_intensity: 140
+        min_volume: 40
+
+  # Connectivity analysis
+  connectivity_analysis:
+    enabled: true
+    max_connection_distance: 10.0
+    min_connection_strength: 0.3
+    hub_neuron_threshold: 10
+    
+    # Circuit motif detection
+    motif_detection:
+      enabled: true
+      min_motif_size: 3
+      max_motif_size: 10
+      motif_confidence_threshold: 0.6
+
+  # Morphological analysis
+  morphological_analysis:
+    enabled: true
+    skeletonization_method: "3d"  # "3d" or "2d_slice"
+    min_neuron_volume: 100
+    max_neuron_volume: 10000
+    
+    # Morphological features
+    features:
+      - "soma_volume"
+      - "dendritic_length"
+      - "dendritic_complexity"
+      - "branching_factor"
+      - "spine_density"
+      - "spine_type_distribution"
+      - "synapse_density"
+      - "connectivity_degree"
+
+# Allen Brain SDK Configuration
+allen_brain_sdk:
+  enabled: true
+  manifest_file: "brain_observatory_manifest.json"
+  cache_dir: "allen_brain_cache"
+  
+  # Data sources
+  data_sources:
+    cell_types: true
+    brain_observatory: true
+    mouse_connectivity: false
+    human_connectivity: false
+  
+  # Query settings
+  query_settings:
+    max_cells_per_query: 1000
+    timeout_seconds: 30
+    retry_attempts: 3
+
+# SAM2 Refinement Configuration
+sam2_refinement:
+  enabled: true
+  model_checkpoint: "checkpoints/sam2_hiera_t.pt"
+  refinement_threshold: 0.8
+  max_refinement_iterations: 3
+  
+  # Model parameters
+  model_params:
+    encoder_patch_embed_dim: 96
+    encoder_num_heads: 3
+    encoder_window_size: 7
+    encoder_depth: 2
+    encoder_global_attn_indexes: []
+
+# Performance and Resource Configuration
+performance:
+  # Memory management
+  max_memory_usage: "16GB"
+  memory_fraction: 0.8
+  
+  # Processing
+  max_neurons_per_batch: 100
+  max_spines_per_analysis: 1000
+  max_synapses_per_analysis: 500
+  
+  # Caching
+  enable_result_caching: true
+  cache_expiry_hours: 24
+  max_cache_size: "10GB"
+
+# Output and Export Configuration
+output:
+  # File formats
+  formats:
+    - "json"
+    - "h5"
+    - "swc"
+    - "csv"
+  
+  # Visualization
+  visualization:
+    enabled: true
+    formats: ["html", "png", "pdf"]
+    include_3d_plots: true
+    include_statistics: true
+  
+  # Reports
+  reports:
+    generate_summary: true
+    generate_detailed: true
+    include_confidence_scores: true
+    include_uncertainty_estimates: true
+
+# Validation and Quality Control
+validation:
+  # Quality metrics
+  quality_metrics:
+    - "spine_detection_accuracy"
+    - "molecular_prediction_confidence"
+    - "connectivity_validation"
+    - "morphological_consistency"
+  
+  # Thresholds
+  thresholds:
+    min_analysis_confidence: 0.6
+    min_spine_detection_confidence: 0.7
+    min_molecular_prediction_confidence: 0.6
+    min_connectivity_confidence: 0.5
+
+# Error Handling and Recovery
+error_handling:
+  # Graceful degradation
+  graceful_degradation: true
+  
+  # Fallback options
+  fallbacks:
+    spine_detection: "rule_based"
+    molecular_prediction: "rule_based"
+    allen_brain_sdk: "skip"
+    sam2_refinement: "skip"
+  
+  # Retry logic
+  retry:
+    max_attempts: 3
+    backoff_factor: 2.0
+    timeout_seconds: 30 

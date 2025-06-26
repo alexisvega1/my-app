@@ -1,0 +1,41 @@
+{
+  "test_info": {
+    "volume_shape": [
+      64,
+      64,
+      64
+    ],
+    "segmentation_shape": [
+      64,
+      64,
+      64
+    ],
+    "neuron_id": 1,
+    "timestamp": "2025-06-23T18:45:14"
+  },
+  "morphological_analysis": {
+    "volume": 4843,
+    "centroid": [
+      32,
+      32,
+      32
+    ],
+    "bounding_box": [
+      64,
+      64,
+      64
+    ]
+  },
+  "spine_analysis": {
+    "detected_spines": 4,
+    "spine_types": {
+      "mushroom": 2,
+      "thin": 1,
+      "stubby": 1
+    }
+  },
+  "molecular_predictions": {
+    "pyramidal": 0.8,
+    "glutamatergic": 0.9
+  }
+}
