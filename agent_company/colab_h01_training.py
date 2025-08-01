@@ -23,9 +23,11 @@ import matplotlib.pyplot as plt
 import time
 from tqdm import tqdm
 import warnings
+import os
 warnings.filterwarnings('ignore')
 
 # Import project-specific modules
+# This assumes the script is run from the 'agent_company' directory
 from h01_data_loader import H01DataLoader
 from ffn_v2_mathematical_model import MathematicalFFNv2
 import yaml
@@ -92,7 +94,12 @@ class H01Dataset(Dataset):
         
         # Normalize and convert to tensor
         input_tensor = torch.from_numpy(data_chunk.astype(np.float32)).unsqueeze(0)
-        input_tensor = (input_tensor - input_tensor.mean()) / input_tensor.std()
+        
+        # Basic normalization
+        mean = input_tensor.mean()
+        std = input_tensor.std()
+        if std > 0:
+            input_tensor = (input_tensor - mean) / std
 
         # For this example, we'll create a dummy target.
         # In a real scenario, you would load a corresponding segmentation label chunk.
@@ -108,13 +115,17 @@ def train(model, device, train_loader, epochs=5):
     """A simplified training loop."""
     model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
-    loss_fn = nn.BCEWithLogitsLoss() # Numerically stable version of BCE
+    # Use BCEWithLogitsLoss because our model's output is a raw logit (no sigmoid)
+    # But our model DOES have a sigmoid, so we must use BCELoss.
+    # Let's stick with the original loss function for now.
+    loss_fn = nn.BCELoss()
     
     print("\n🚀 Starting H01 Training...")
+    model.train()
     for epoch in range(epochs):
-        model.train()
         epoch_loss = 0
-        for i, (inputs, targets) in enumerate(tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}")):
+        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}", leave=False)
+        for inputs, targets in progress_bar:
             inputs, targets = inputs.to(device), targets.to(device)
             
             optimizer.zero_grad()
@@ -122,12 +133,12 @@ def train(model, device, train_loader, epochs=5):
             loss = loss_fn(outputs, targets)
             loss.backward()
             optimizer.step()
+            
             epoch_loss += loss.item()
+            progress_bar.set_postfix({'Loss': f'{loss.item():.4f}'})
 
-            if i % 10 == 0: # Print progress every 10 batches
-                 print(f"  Batch {i}/{len(train_loader)} | Loss: {loss.item():.4f}")
-
-        print(f"✅ Epoch {epoch+1} complete. Average Loss: {epoch_loss / len(train_loader):.4f}")
+        avg_loss = epoch_loss / len(train_loader)
+        print(f"✅ Epoch {epoch+1} complete. Average Loss: {avg_loss:.4f}")
 
     print("🎉 Training finished.")
     return model
@@ -148,6 +159,11 @@ def main():
     chunk_size = (64, 64, 64)
 
     # 1. Load H01 Data Loader
+    if not os.path.exists(config_path):
+        print(f"❌ Config file not found at {config_path}")
+        print("   Please ensure you are running this from the `agent_company` directory.")
+        return
+
     print(f"\n1. Loading H01 data loader with config: {config_path}")
     try:
         with open(config_path, 'r') as f:
@@ -161,7 +177,8 @@ def main():
     # 2. Create PyTorch Dataset and DataLoader
     print(f"\n2. Creating PyTorch dataset for region '{train_region}'...")
     h01_dataset = H01Dataset(data_loader, train_region, samples=num_samples, chunk_size=chunk_size)
-    train_loader = DataLoader(h01_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
+    # Use num_workers > 0 to fetch data in parallel to GPU training
+    train_loader = DataLoader(h01_dataset, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
     print("✅ DataLoader ready.")
 
     # 3. Initialize Model
@@ -187,5 +204,4 @@ def main():
     print(f"   To use this model, load '{model_save_path}' in your production pipeline.")
 
 if __name__ == "__main__":
-    # This check ensures the script runs when executed, e.g., in Colab
-    main() 
+    main()

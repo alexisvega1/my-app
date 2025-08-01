@@ -1,0 +1,226 @@
+# Enhanced Connectomics Pipeline Configuration
+# ===========================================
+
+# Data configuration
+input_volume_path: "/path/to/your/volume.npy"
+output_dir: "/path/to/output/directory"
+seed_points:
+  - [100, 150, 200]
+  - [300, 250, 180]
+  - [450, 320, 280]
+  - [200, 400, 350]
+
+# Model configuration
+model:
+  input_channels: 1
+  hidden_channels: [32, 64, 128, 256, 512]
+  output_channels: 1
+  use_attention: true
+  use_residual: true
+  use_batch_norm: true
+  use_dropout: true
+  dropout_rate: 0.1
+  use_skip_connections: true
+  use_deep_supervision: true
+  use_uncertainty_estimation: true
+  use_auxiliary_losses: true
+  use_mixed_precision: true
+  use_gradient_checkpointing: false
+  use_amp: true
+  use_memory_efficient_attention: true
+  chunk_size: 1024
+
+# Flood-filling configuration
+floodfill:
+  # Core parameters
+  fov_size: [33, 33, 33]
+  confidence_threshold: 0.9
+  max_iterations: 10000
+  min_segment_size: 100
+  
+  # Memory optimization
+  chunk_size: [128, 128, 128]
+  overlap_size: [16, 16, 16]
+  use_memory_mapping: true
+  
+  # Performance optimization
+  batch_size: 4
+  num_workers: 4
+  use_gpu: true
+  
+  # Quality control
+  edge_smoothing: true
+  connectivity_check: true
+  remove_small_components: true
+  
+  # Advanced features
+  adaptive_thresholding: true
+  multi_scale_processing: true
+  uncertainty_aware: true
+  
+  # Visualization
+  save_intermediate: true
+  save_interval: 100
+  visualization_format: "npy"  # "npy", "h5", "zarr"
+
+# Processing configuration
+batch_size: 1
+num_workers: 4
+use_gpu: true
+mixed_precision: true
+
+# Quality control
+min_segment_size: 100
+max_segments_per_volume: 1000
+quality_threshold: 0.7
+
+# Output configuration
+save_intermediate: true
+save_visualizations: true
+output_format: "h5"  # "h5", "npy", "zarr"
+
+# Monitoring
+enable_monitoring: true
+log_interval: 100
+save_checkpoints: true
+
+# Advanced processing options
+processing:
+  # Memory management
+  max_memory_usage_gb: 32
+  use_memory_mapping: true
+  chunk_processing: true
+  
+  # Parallel processing
+  use_multiprocessing: true
+  max_processes: 4
+  
+  # Error handling
+  max_retries: 3
+  continue_on_error: true
+  
+  # Performance tuning
+  prefetch_factor: 2
+  pin_memory: true
+
+# Quality assessment
+quality_assessment:
+  # Metrics to compute
+  compute_connectivity: true
+  compute_compactness: true
+  compute_edge_quality: true
+  compute_uncertainty_stats: true
+  
+  # Thresholds
+  min_connectivity: 0.8
+  min_compactness: 0.3
+  max_edge_density: 0.1
+  
+  # Reporting
+  generate_quality_report: true
+  save_quality_plots: true
+
+# Visualization options
+visualization:
+  # 2D slices
+  save_2d_slices: true
+  slice_interval: 10
+  colormap: "viridis"
+  
+  # 3D rendering
+  save_3d_renders: false
+  render_resolution: [1024, 1024]
+  
+  # Animation
+  create_animation: false
+  animation_fps: 30
+  animation_duration: 10
+
+# Logging configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "pipeline.log"
+  console: true
+  
+  # Performance logging
+  log_memory_usage: true
+  log_processing_times: true
+  log_gpu_usage: true
+
+# Checkpointing
+checkpointing:
+  save_checkpoints: true
+  checkpoint_interval: 1000
+  max_checkpoints: 5
+  checkpoint_dir: "checkpoints"
+  
+  # Resume from checkpoint
+  resume_from_checkpoint: false
+  checkpoint_path: ""
+
+# Distributed processing (for large datasets)
+distributed:
+  enabled: false
+  backend: "nccl"  # "nccl", "gloo", "mpi"
+  world_size: 1
+  rank: 0
+  init_method: "env://"
+  
+  # Data parallelism
+  use_data_parallel: false
+  num_gpus: 1
+  
+  # Model parallelism
+  use_model_parallel: false
+  split_size: 1
+
+# Validation and testing
+validation:
+  # Test mode
+  test_mode: false
+  test_subset_size: 100
+  
+  # Validation metrics
+  compute_iou: true
+  compute_dice: true
+  compute_hausdorff: false
+  
+  # Ground truth comparison
+  ground_truth_path: ""
+  compare_with_ground_truth: false
+
+# Optimization settings
+optimization:
+  # Mixed precision
+  use_amp: true
+  amp_dtype: "float16"
+  
+  # Gradient accumulation
+  gradient_accumulation_steps: 1
+  
+  # Memory optimization
+  use_gradient_checkpointing: false
+  use_memory_efficient_attention: true
+  
+  # Compilation (PyTorch 2.0+)
+  use_torch_compile: false
+  compile_mode: "reduce-overhead"
+
+# Error handling and recovery
+error_handling:
+  # Retry logic
+  max_retries: 3
+  retry_delay: 1.0
+  
+  # Error recovery
+  continue_on_error: true
+  save_partial_results: true
+  
+  # Monitoring
+  monitor_system_resources: true
+  alert_on_failure: false
+  
+  # Cleanup
+  cleanup_on_exit: true
+  remove_temp_files: true 

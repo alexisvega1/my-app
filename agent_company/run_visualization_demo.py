@@ -10,9 +10,15 @@ import os
 import numpy as np
 import subprocess
 import logging
-from agent_company.segmenters.ffn_v2_advanced import AdvancedFFNv2Plugin
-from agent_company.ffn_v2_mathematical_model import MathematicalFFNv2
+from segmenters.ffn_v2_advanced import AdvancedFFNv2Plugin
+from ffn_v2_mathematical_model import MathematicalFFNv2
 import torch
+
+# Set base path to ensure modules are found
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in os.sys.path:
+    os.sys.path.insert(0, BASE_DIR)
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -38,11 +44,11 @@ def main():
     logging.info("======== Starting Visualization Demo ========")
 
     # --- 1. Setup Configuration ---
-    output_dir = "agent_company/production_output"
+    output_dir = os.path.join(BASE_DIR, "production_output")
     volume_path = os.path.join(output_dir, "synthetic_vis_volume.npy")
-    model_path = "agent_company/best_mathematical_ffn_v2.pt" # Using the best model we trained
-    steps_dir = os.path.join(output_dir, "segmentation_steps")
-
+    # Model path is relative to the workspace root, not this script's location
+    model_path = "best_mathematical_ffn_v2.pt" 
+    
     os.makedirs(output_dir, exist_ok=True)
 
     # --- 2. Create Synthetic Data ---
@@ -52,10 +58,17 @@ def main():
     logging.info("Initializing FFN plugin and loading model...")
     ffn_plugin = AdvancedFFNv2Plugin()
     
+    # Adjust model path to be relative to the script's execution directory
+    # This assumes you run the script from the root of the `my-app` directory
     if not os.path.exists(model_path):
-        logging.error(f"Model checkpoint not found at {model_path}. Please ensure it exists.")
-        return
-        
+        # Let's try looking inside the agent_company dir as a fallback
+        model_path_alt = os.path.join(BASE_DIR, model_path)
+        if not os.path.exists(model_path_alt):
+            logging.error(f"Model checkpoint not found at '{model_path}' or '{model_path_alt}'.")
+            logging.error("Please ensure the model checkpoint is in the root or agent_company directory.")
+            return
+        model_path = model_path_alt
+
     # We must load the model state into the correct architecture
     model = MathematicalFFNv2(input_channels=1, output_channels=1, hidden_channels=64, depth=3)
     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
@@ -82,15 +95,17 @@ def main():
 
     # --- 5. Run the Visualization Script to Create Animation ---
     logging.info("Launching animation viewer...")
+    vis_script_path = os.path.join(BASE_DIR, "visualization.py")
     vis_command = [
         "python",
-        "agent_company/visualization.py",
+        vis_script_path,
         "--animate",
         generated_steps_dir
     ]
     
     try:
-        subprocess.run(vis_command, check=True)
+        # We need to run this from the root directory for imports to work
+        subprocess.run(vis_command, check=True, cwd=os.path.join(BASE_DIR, '..'))
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         logging.error(f"Failed to launch visualization: {e}")
         logging.error("Please ensure napari is installed (`pip install napari[pyqt5]`) and all scripts are in place.")
@@ -98,4 +113,4 @@ def main():
     logging.info("======== Visualization Demo Finished ========")
 
 if __name__ == "__main__":
-    main() 
+    main()
