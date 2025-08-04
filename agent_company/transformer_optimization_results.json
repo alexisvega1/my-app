@@ -1,0 +1,35 @@
+{
+  "best_config": {
+    "learning_rate": 1e-07,
+    "batch_size": 128,
+    "hidden_size": 512,
+    "num_layers": 24,
+    "num_heads": 16,
+    "dropout_rate": 0.1,
+    "weight_decay": 0.01
+  },
+  "best_metrics": {
+    "loss": 0.05426895151409933,
+    "accuracy": 0.885246733039504,
+    "learning_rate": 9.9e-08,
+    "batch_size": 128,
+    "memory_usage_gb": 6.76674176840333,
+    "gpu_utilization": 0.699190134445378
+  },
+  "convergence_analysis": {
+    "total_iterations": 100,
+    "final_loss": 0.05426895151409933,
+    "final_accuracy": 0.885246733039504,
+    "loss_improvement": 0.47278377274271016,
+    "accuracy_improvement": 0.38524673303950396,
+    "lr_final": 9.9e-08,
+    "lr_change": 0.901,
+    "convergence_rate": 0.8151475765066741
+  },
+  "recommendations": [
+    "Learning rate is very low - consider increasing for faster convergence",
+    "Large batch size detected - consider reducing for better generalization",
+    "Low GPU utilization - consider increasing batch size or model complexity"
+  ],
+  "optimization_time": 0.022630929946899414
+}
