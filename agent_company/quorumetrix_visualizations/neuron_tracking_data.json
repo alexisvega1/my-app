@@ -1,0 +1,191 @@
+{
+  "tracking_statistics": {
+    "neurons_tracked": 10,
+    "time_points": 20,
+    "tracking_paths": {
+      "neuron_000": {
+        "num_positions": 20,
+        "start_position": [
+          -0.526176702949188,
+          -5.696911403983513
+        ],
+        "end_position": [
+          -1.0271921249885974,
+          -5.992377151410622
+        ],
+        "total_distance": 21.4337911441579,
+        "color": "#ff6d6d"
+      },
+      "neuron_001": {
+        "num_positions": 20,
+        "start_position": [
+          1.267912857926223,
+          -4.6958890225953684
+        ],
+        "end_position": [
+          0.9292794651440726,
+          -4.423448995202841
+        ],
+        "total_distance": 14.201494358132766,
+        "color": "#4ecdc4"
+      },
+      "neuron_002": {
+        "num_positions": 20,
+        "start_position": [
+          -1.165568915253548,
+          8.361280586698646
+        ],
+        "end_position": [
+          -0.702732351914392,
+          7.921873419926865
+        ],
+        "total_distance": 17.387861159806448,
+        "color": "#43b2cb"
+      },
+      "neuron_003": {
+        "num_positions": 20,
+        "start_position": [
+          7.7093188141273625,
+          -9.099405174364609
+        ],
+        "end_position": [
+          7.283573207808831,
+          -9.795831659503062
+        ],
+        "total_distance": 20.211348445890167,
+        "color": "#95cdb3"
+      },
+      "neuron_004": {
+        "num_positions": 20,
+        "start_position": [
+          2.6540922244824445,
+          3.4823674601833803
+        ],
+        "end_position": [
+          2.719107686077219,
+          3.150322563054962
+        ],
+        "total_distance": 20.597938954079897,
+        "color": "#f9c655"
+      },
+      "neuron_005": {
+        "num_positions": 20,
+        "start_position": [
+          -3.05488999561451,
+          8.326368525115788
+        ],
+        "end_position": [
+          -3.6905006749812865,
+          8.397845087950927
+        ],
+        "total_distance": 17.90764083832811,
+        "color": "#f498e8"
+      },
+      "neuron_006": {
+        "num_positions": 20,
+        "start_position": [
+          3.0194678700586355,
+          3.139964749265247
+        ],
+        "end_position": [
+          3.6711124162007946,
+          1.4167907223119047
+        ],
+        "total_distance": 21.573425389473066,
+        "color": "#539ffe"
+      },
+      "neuron_007": {
+        "num_positions": 20,
+        "start_position": [
+          0.47947188630619464,
+          4.398404863478598
+        ],
+        "end_position": [
+          -0.2520964181389993,
+          3.0213590487744764
+        ],
+        "total_distance": 15.29814821027463,
+        "color": "#6228d4"
+      },
+      "neuron_008": {
+        "num_positions": 20,
+        "start_position": [
+          8.990315842555187,
+          6.668003448185654
+        ],
+        "end_position": [
+          9.143634914527984,
+          6.360290670629151
+        ],
+        "total_distance": 19.90575536879201,
+        "color": "#00ddde"
+      },
+      "neuron_009": {
+        "num_positions": 20,
+        "start_position": [
+          10.108259515595837,
+          -7.99640522953262
+        ],
+        "end_position": [
+          9.158223857852743,
+          -7.858719384555982
+        ],
+        "total_distance": 21.284130515273148,
+        "color": "#ea923d"
+      }
+    }
+  },
+  "color_mapping": {
+    "neuron_000": "#ff6d6d",
+    "neuron_001": "#4ecdc4",
+    "neuron_002": "#43b2cb",
+    "neuron_003": "#95cdb3",
+    "neuron_004": "#f9c655",
+    "neuron_005": "#f498e8",
+    "neuron_006": "#539ffe",
+    "neuron_007": "#6228d4",
+    "neuron_008": "#00ddde",
+    "neuron_009": "#ea923d",
+    "neuron_010": "#f56767",
+    "neuron_011": "#53dad0",
+    "neuron_012": "#46bad5",
+    "neuron_013": "#88bca4",
+    "neuron_014": "#ecbc51",
+    "neuron_015": "#ff9ff4",
+    "neuron_016": "#4f97f1",
+    "neuron_017": "#5a25c4",
+    "neuron_018": "#00d7d8",
+    "neuron_019": "#ef953f",
+    "neuron_020": "#ea6262",
+    "neuron_021": "#46bab1",
+    "neuron_022": "#42b1ca",
+    "neuron_023": "#95cdb3",
+    "neuron_024": "#ffd25a",
+    "neuron_025": "#ffadff",
+    "neuron_026": "#55a3ff",
+    "neuron_027": "#672adf",
+    "neuron_028": "#00cecf",
+    "neuron_029": "#ea923d",
+    "neuron_030": "#fb6969",
+    "neuron_031": "#52dad0",
+    "neuron_032": "#44b4ce",
+    "neuron_033": "#8dc1a9",
+    "neuron_034": "#f2c053",
+    "neuron_035": "#ee94e3",
+    "neuron_036": "#56a4ff",
+    "neuron_037": "#6629dc",
+    "neuron_038": "#00bfbf",
+    "neuron_039": "#ff9f43",
+    "neuron_040": "#ff7373",
+    "neuron_041": "#46b9b1",
+    "neuron_042": "#46bad4",
+    "neuron_043": "#9cd7bc",
+    "neuron_044": "#e8b84f",
+    "neuron_045": "#fc9df0",
+    "neuron_046": "#4c92e9",
+    "neuron_047": "#6228d5",
+    "neuron_048": "#00dfe0",
+    "neuron_049": "#ffa244"
+  },
+  "visualization_type": "neuron_tracking_2d"
+}

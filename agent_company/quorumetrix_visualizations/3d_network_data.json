@@ -1,0 +1,41 @@
+{
+  "title": "3D Connectomics Network",
+  "num_neurons": 50,
+  "num_synapses": 97,
+  "spatial_statistics": {
+    "x_range": [
+      -9.863535791763308,
+      9.905937569255183
+    ],
+    "y_range": [
+      -9.984174662543044,
+      9.653044559911361
+    ],
+    "z_range": [
+      -4.80351158014005,
+      4.046521125371834
+    ],
+    "center": [
+      0.7454941667356336,
+      0.2154785260648261,
+      -0.313134322715973
+    ]
+  },
+  "connection_statistics": {
+    "total_connections": 97,
+    "avg_connection_strength": 0.5257472195905687,
+    "connection_types": {
+      "chemical": 61,
+      "electrical": 36
+    }
+  },
+  "view_angles": {
+    "elevation": 20.0,
+    "azimuth": 45.0
+  },
+  "rendering_settings": {
+    "neuron_alpha": 0.8,
+    "synapse_alpha": 0.9,
+    "background_color": "#1a1a1a"
+  }
+}

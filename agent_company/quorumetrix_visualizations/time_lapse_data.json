@@ -1,0 +1,314 @@
+{
+  "time_series_length": 10,
+  "neurons_tracked": 50,
+  "time_statistics": {
+    "num_time_points": 10,
+    "time_range": [
+      0,
+      9
+    ],
+    "activity_statistics": {
+      "neuron_000": {
+        "mean_activity": 0.24268512348937313,
+        "max_activity": 0.820393808012335,
+        "min_activity": 0.03555822677158815,
+        "activity_variance": 0.05093532254464257
+      },
+      "neuron_001": {
+        "mean_activity": 0.4612238279481381,
+        "max_activity": 0.993657765865012,
+        "min_activity": 0.13892355030959902,
+        "activity_variance": 0.06534886876014279
+      },
+      "neuron_002": {
+        "mean_activity": 0.513402649301717,
+        "max_activity": 0.9960395946673664,
+        "min_activity": 0.028803955101686984,
+        "activity_variance": 0.09350052514587565
+      },
+      "neuron_003": {
+        "mean_activity": 0.41627979197234055,
+        "max_activity": 0.9913287484800655,
+        "min_activity": 0.05692421848430451,
+        "activity_variance": 0.08903357422224797
+      },
+      "neuron_004": {
+        "mean_activity": 0.6480458944984477,
+        "max_activity": 0.9950338168295657,
+        "min_activity": 0.12124708079475244,
+        "activity_variance": 0.10462347447446974
+      },
+      "neuron_005": {
+        "mean_activity": 0.36471668425185416,
+        "max_activity": 0.91708191924199,
+        "min_activity": 0.09870752907769931,
+        "activity_variance": 0.09305278304152935
+      },
+      "neuron_006": {
+        "mean_activity": 0.4332935280817412,
+        "max_activity": 0.6572051730829319,
+        "min_activity": 0.02416447834947333,
+        "activity_variance": 0.03514114142341527
+      },
+      "neuron_007": {
+        "mean_activity": 0.5656719566360444,
+        "max_activity": 0.9933382325832438,
+        "min_activity": 0.008099656600526584,
+        "activity_variance": 0.07847874826324779
+      },
+      "neuron_008": {
+        "mean_activity": 0.48624653832855264,
+        "max_activity": 0.928387984572565,
+        "min_activity": 0.16299112517937342,
+        "activity_variance": 0.07595695620979397
+      },
+      "neuron_009": {
+        "mean_activity": 0.3886436326875361,
+        "max_activity": 0.9667044168372769,
+        "min_activity": 0.014398881533511654,
+        "activity_variance": 0.09890174086476193
+      },
+      "neuron_010": {
+        "mean_activity": 0.44222941105666685,
+        "max_activity": 0.8811278880843125,
+        "min_activity": 0.02174409116497289,
+        "activity_variance": 0.0835849454335533
+      },
+      "neuron_011": {
+        "mean_activity": 0.5274952560339077,
+        "max_activity": 0.9687398152312646,
+        "min_activity": 0.038222630032628935,
+        "activity_variance": 0.10229517520588698
+      },
+      "neuron_012": {
+        "mean_activity": 0.6053384696744976,
+        "max_activity": 0.9480868681788489,
+        "min_activity": 0.017935083396673268,
+        "activity_variance": 0.08670371448428432
+      },
+      "neuron_013": {
+        "mean_activity": 0.42644571688706706,
+        "max_activity": 0.6194155642319943,
+        "min_activity": 0.2039212665803818,
+        "activity_variance": 0.02130110357443374
+      },
+      "neuron_014": {
+        "mean_activity": 0.5173550319496728,
+        "max_activity": 0.8362968400521232,
+        "min_activity": 0.07390860564994428,
+        "activity_variance": 0.062093126443493275
+      },
+      "neuron_015": {
+        "mean_activity": 0.37684025415188627,
+        "max_activity": 0.9832625599949522,
+        "min_activity": 0.01621018006742425,
+        "activity_variance": 0.10187003637120165
+      },
+      "neuron_016": {
+        "mean_activity": 0.48090972080517663,
+        "max_activity": 0.9787713674845341,
+        "min_activity": 0.03654602275767904,
+        "activity_variance": 0.08517687493571949
+      },
+      "neuron_017": {
+        "mean_activity": 0.48749340795763574,
+        "max_activity": 0.8415829887782662,
+        "min_activity": 0.038188109235585244,
+        "activity_variance": 0.05265922958087532
+      },
+      "neuron_018": {
+        "mean_activity": 0.5306957134919461,
+        "max_activity": 0.9979601433421403,
+        "min_activity": 0.04916064399578779,
+        "activity_variance": 0.0993555822660997
+      },
+      "neuron_019": {
+        "mean_activity": 0.6342755487207078,
+        "max_activity": 0.9984986178206591,
+        "min_activity": 0.13439147404768248,
+        "activity_variance": 0.08866589894256707
+      },
+      "neuron_020": {
+        "mean_activity": 0.4811411037042316,
+        "max_activity": 0.923715664662891,
+        "min_activity": 0.032840702618256445,
+        "activity_variance": 0.07373413389710774
+      },
+      "neuron_021": {
+        "mean_activity": 0.41702596960774424,
+        "max_activity": 0.8256527899629881,
+        "min_activity": 0.17330030150956,
+        "activity_variance": 0.046163168203994895
+      },
+      "neuron_022": {
+        "mean_activity": 0.35934180706578783,
+        "max_activity": 0.7821240443266382,
+        "min_activity": 0.0096623811050911,
+        "activity_variance": 0.060413715831314205
+      },
+      "neuron_023": {
+        "mean_activity": 0.6050878102505475,
+        "max_activity": 0.9958126323651659,
+        "min_activity": 0.1063481913565778,
+        "activity_variance": 0.11882968291017167
+      },
+      "neuron_024": {
+        "mean_activity": 0.475549813313354,
+        "max_activity": 0.9319293987376579,
+        "min_activity": 0.12169154000115712,
+        "activity_variance": 0.06250899702118437
+      },
+      "neuron_025": {
+        "mean_activity": 0.5017706909561356,
+        "max_activity": 0.8874944814682538,
+        "min_activity": 0.019357869540521544,
+        "activity_variance": 0.0802519955584152
+      },
+      "neuron_026": {
+        "mean_activity": 0.4103160059483102,
+        "max_activity": 0.9211562615947748,
+        "min_activity": 0.010459370459650286,
+        "activity_variance": 0.09203128701751759
+      },
+      "neuron_027": {
+        "mean_activity": 0.5623031076458955,
+        "max_activity": 0.9852697370567555,
+        "min_activity": 0.17779476808523476,
+        "activity_variance": 0.06526834601400687
+      },
+      "neuron_028": {
+        "mean_activity": 0.42160469974887577,
+        "max_activity": 0.967979362645826,
+        "min_activity": 0.020536016316948236,
+        "activity_variance": 0.1271306468172417
+      },
+      "neuron_029": {
+        "mean_activity": 0.5368453210430155,
+        "max_activity": 0.7848094086929132,
+        "min_activity": 0.06786708726297486,
+        "activity_variance": 0.0433459977443811
+      },
+      "neuron_030": {
+        "mean_activity": 0.4592619687846874,
+        "max_activity": 0.9676510109002779,
+        "min_activity": 0.1817270512431114,
+        "activity_variance": 0.08291073944844901
+      },
+      "neuron_031": {
+        "mean_activity": 0.5495942279539112,
+        "max_activity": 0.9138844456949003,
+        "min_activity": 0.11299240597471183,
+        "activity_variance": 0.05108679766294164
+      },
+      "neuron_032": {
+        "mean_activity": 0.5345266068546661,
+        "max_activity": 0.9824328300609563,
+        "min_activity": 0.00040488823722462097,
+        "activity_variance": 0.12292668732997454
+      },
+      "neuron_033": {
+        "mean_activity": 0.5495798321912244,
+        "max_activity": 0.8727328810953668,
+        "min_activity": 0.18552625012357904,
+        "activity_variance": 0.046092730130811846
+      },
+      "neuron_034": {
+        "mean_activity": 0.562506567457895,
+        "max_activity": 0.9474222234645866,
+        "min_activity": 0.13033690666348852,
+        "activity_variance": 0.05364726491179015
+      },
+      "neuron_035": {
+        "mean_activity": 0.5542674542236327,
+        "max_activity": 0.9380673837092405,
+        "min_activity": 0.07823365061697007,
+        "activity_variance": 0.07472591388253462
+      },
+      "neuron_036": {
+        "mean_activity": 0.40460554358301193,
+        "max_activity": 0.8636157100424829,
+        "min_activity": 0.14609838227373106,
+        "activity_variance": 0.04711727746090662
+      },
+      "neuron_037": {
+        "mean_activity": 0.46395793726778345,
+        "max_activity": 0.8706341322072249,
+        "min_activity": 0.018689712213902476,
+        "activity_variance": 0.07001088559634684
+      },
+      "neuron_038": {
+        "mean_activity": 0.5467904670703079,
+        "max_activity": 0.9003905440705797,
+        "min_activity": 0.13974018002077826,
+        "activity_variance": 0.07300493222697876
+      },
+      "neuron_039": {
+        "mean_activity": 0.5483435065041226,
+        "max_activity": 0.9960017990931531,
+        "min_activity": 0.0735330593336826,
+        "activity_variance": 0.09960150122578791
+      },
+      "neuron_040": {
+        "mean_activity": 0.5847642435129872,
+        "max_activity": 0.9937278479818092,
+        "min_activity": 0.17551948591812694,
+        "activity_variance": 0.0748712490973068
+      },
+      "neuron_041": {
+        "mean_activity": 0.5867301173182596,
+        "max_activity": 0.9358839061534865,
+        "min_activity": 0.22527000275335052,
+        "activity_variance": 0.060260087769054685
+      },
+      "neuron_042": {
+        "mean_activity": 0.6653839329948209,
+        "max_activity": 0.9827285323150378,
+        "min_activity": 0.17507029974558863,
+        "activity_variance": 0.05665129265143161
+      },
+      "neuron_043": {
+        "mean_activity": 0.45463276761888977,
+        "max_activity": 0.8811023589059326,
+        "min_activity": 0.010602208818700887,
+        "activity_variance": 0.08473872342630896
+      },
+      "neuron_044": {
+        "mean_activity": 0.5339493011914584,
+        "max_activity": 0.8652603884523014,
+        "min_activity": 0.21588245692187313,
+        "activity_variance": 0.04169216103607632
+      },
+      "neuron_045": {
+        "mean_activity": 0.4456290620929407,
+        "max_activity": 0.9032135227558846,
+        "min_activity": 0.16647286414703977,
+        "activity_variance": 0.05828695603216687
+      },
+      "neuron_046": {
+        "mean_activity": 0.5723306759286969,
+        "max_activity": 0.94853026916483,
+        "min_activity": 0.13350550651357096,
+        "activity_variance": 0.07174333943948683
+      },
+      "neuron_047": {
+        "mean_activity": 0.4859883440824329,
+        "max_activity": 0.9835698322564543,
+        "min_activity": 0.1452191156928737,
+        "activity_variance": 0.09215076545430273
+      },
+      "neuron_048": {
+        "mean_activity": 0.34728478515939176,
+        "max_activity": 0.8961008830446109,
+        "min_activity": 0.002628389118455421,
+        "activity_variance": 0.07882186769195862
+      },
+      "neuron_049": {
+        "mean_activity": 0.5646420878323126,
+        "max_activity": 0.8908140755388863,
+        "min_activity": 0.2701470980109324,
+        "activity_variance": 0.04055410273283363
+      }
+    }
+  },
+  "visualization_type": "time_lapse_2d_projection"
+}
