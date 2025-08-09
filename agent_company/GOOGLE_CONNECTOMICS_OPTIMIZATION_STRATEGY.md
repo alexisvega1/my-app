@@ -1,7 +1,77 @@
 # Google Connectomics Team Optimization Strategy
 ## High-Impact Approaches for Maximum Impressiveness
 
+
 ### Executive Summary
+
+> **Interview‑Ready Addendum — Robust, Production‑Shaped Pipeline**
+>
+> This addendum converts the strategy into a concrete, measurable plan that mirrors how Google Connectomics runs petascale pipelines. It emphasizes reproducibility, quality metrics, cost/throughput SLOs, and deterministic reprocessing.
+
+## North‑Star & SLOs (what “robust” means)
+- **Image scale**: ≤8×8×30 nm EM; <3% missing tiles; montage median residual < **1 px**.
+- **Segmentation quality**: **VI_split ≤ 0.3**, **VI_merge ≤ 0.3** on blinded cubes; Adapted Rand ↑.
+- **Synapses**: **Precision/Recall ≥ 0.90/0.90** with graph consistency checks.
+- **Ops**: reprocess any **256³ ROI in <24 h**, sustained reconstruction **≥10 mm³/week** (→ ≥100 mm³/month by scale‑up).
+- **Human‑time**: **minutes/mm³ ≤ 30** (≤15 at scale) via active‑learning proofreading.
+- **Cost**: track **$ per mm³** and **GB per mm³** by tier (hot/warm/cold) with quarterly reduction targets.
+
+## Architecture (end‑to‑end, production‑shaped)
+1) **Ingest & Storage**
+   - Object storage (S3/GCS) in **Neuroglancer precomputed/TensorStore**; chunk 128³ with 2‑voxel halos; multi‑mip pyramids.
+   - NVMe hot caches; erasure‑coded warm; Glacier/tape cold.
+   - **Immutable namespaces**: `/raw/vN`, `/stitched/vN`, `/normalized/vN`, `/segments/vN`, `/synapses/vN`.
+2) **Montage/Registration/Normalization**
+   - Feature + phase‑corr, global solver with loop‑closure; elastic warp (B‑spline); banding/illumination normalization.
+   - QC: residual histograms, intensity drift, % rescans.
+3) **Segmentation (FFN++)**
+   - Long‑context assist (low‑res 3D channel), topology‑aware losses to suppress merges, multi‑agent growth with boundary ID reconciliation.
+   - Deterministic chunking/merging; checkpoint every 256³; spot‑friendly.
+4) **Synapse Detection & Partner Assignment**
+   - UNet/Transformer + triplet consistency; export evidence patches/logits; build point/edge layers.
+5) **Skeletons/Mesh/Graph**
+   - Kimimaro/meshparty; region parcellations; edge‑correctness metrics.
+6) **Proofreading at Scale**
+   - Active‑learning triage; skeleton‑first edits; micro‑tasks; **minutes/mm³** logger.
+7) **Lineage & Observability**
+   - Signed **manifests** (code SHA, params, container digests, checksums). OpenTelemetry traces; Prometheus/Grafana for Mvox/s, cache hit %, retries, $/mm³.
+
+## Quality & Metrics (how we prove it works)
+- **Segmentation**: VI_split/VI_merge, ARI; merge‑alarm rate; seam consistency tests.
+- **Synapses**: PR curves vs truth; partner accuracy.
+- **Ops**: throughput (Mvox/s, mm³/week), reprocess SLA, retry rates, determinism (hash‑stable outputs).
+- **Human**: minutes/mm³ (median, p95); error taxonomy.
+
+## Benchmarks & Acceptance Tests
+- **Montage**: on a 1024×1024×128 stack → median residual <1 px; drift <5% after normalization.
+- **Segmentation**: 3 blinded 256³ cubes → **VI_total** improves ≥15–25% with long‑context + topology loss vs baseline.
+- **Synapses**: PR ≥0.85/0.85 (v1), ≥0.90/0.90 (v2) on held‑out truth.
+- **Throughput**: 1024³ inference <30 min on 1×A100; end‑to‑end 5–10 mm³/week on small cluster.
+- **Reprocess**: any 256³ ROI → stitched→normalized→segments→synapses **<24 h**, outputs bit‑identical across retries.
+
+## 90‑Day → 6‑Month Roadmap (deliverables that impress)
+- **Month 1**: Data plane (precomputed/TensorStore), Neuroglancer layers, CRC checksums; proofreading API with **minutes/mm³**. *Demo*: 512³ end‑to‑end.
+- **Month 2**: Montage/elastic/normalize + QC dashboards; lineage manifests. *Goal*: residual <1 px.
+- **Month 3**: FFN++ baseline + Ray chunk scheduler; deterministic merges; VI harness. *Goal*: 1024³ <30 min infer.
+- **Month 4**: Long‑context input + topology loss; Synapse v1; PR ≥0.85. *Goal*: ≥15% VI_total improvement.
+- **Month 5**: Proofreading at scale; active‑learning triage; reprocess CLI (256³ <24 h). *Goal*: minutes/mm³ ≤45.
+- **Month 6**: 10–30 mm³ dataset with dashboards (VI/PR/throughput/cost); publish slabs + secure enclave for raw. *Goal*: ≥5 mm³/week sustained.
+
+## Risk Register & Mitigations
+- **Merge leaks** → topology losses, global context, merge‑alarm heuristics, randomized traversal.
+- **IO bottlenecks** → NVMe caches, read coalescing, chunk prefetch, compression on warm/cold tiers.
+- **Proofreading drag** → skeleton‑first tools, micro‑tasks, gold sets, time‑boxing; track minutes/mm³.
+- **Cost spikes** → spot‑heavy with checkpointing; autoscaling caps; per‑stage $ budget with auto‑abort.
+- **Reproducibility gaps** → immutable namespaces, manifests, deterministic operators, hash checks.
+
+## Interview Demo Checklist (show, don’t tell)
+- Neuroglancer link/screenshot (raw, GT, prediction layers).
+- VI & synapse PR table (baseline vs +context vs +topology).
+- Lineage manifest JSON (code SHA, params, checksums) for one ROI.
+- Reprocess run log for a 256³ ROI (start→finish <24 h).
+- Dashboard snapshot: Mvox/s, retries, minutes/mm³, $/mm³.
+
+> **Note on claims**: Replace generic “100–1000×” statements with stage‑specific, verifiable targets (e.g., montage 2–3×, segmentation 1.2–2×, IO 2–5×, proofreading 2–3×). This reads credible to Google reviewers and aligns with how they evaluate impact.
 
 This document identifies the optimization approaches most likely to impress the Google Connectomics team, based on their research priorities, technical expertise, and current challenges. We focus on approaches that demonstrate deep understanding of their domain while pushing the boundaries of what's possible.
 
