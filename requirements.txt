@@ -22,6 +22,8 @@ google-cloud-firestore>=2.8.0
 matplotlib>=3.5.0
 napari[pyqt5]
 seaborn>=0.11.0
+neuroglancer
+uvicorn
 
 # LLM & Agentic Components
 openai>=1.14.0
